@@ -409,7 +409,7 @@
                     <span class="collapse-icon" id="taxWithholdingIcon">▼</span>
                 </div>
                 <div class="collapsible-content" id="taxWithholdingSection">
-                    <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 15px;">Optional: Calculate after-tax compensation</p>
+                    <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 15px;">Optional: Calculate after-tax compensation using progressive federal tax brackets</p>
                     
                     <div class="input-group">
                         <label for="enableTax">
@@ -425,14 +425,7 @@
                             <option value="married">Married Filing Jointly</option>
                             <option value="head">Head of Household</option>
                         </select>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="federalTaxRate">Federal Tax Rate (%)</label>
-                        <select id="federalTaxRate" style="width: 100%; padding: 10px; border: 2px solid #d1d5db; border-radius: 6px; font-size: 0.95rem;">
-                            <!-- Options will be populated by JavaScript -->
-                        </select>
-                        <p style="font-size: 0.75rem; color: #6b7280; margin-top: 5px;">2024 federal tax brackets</p>
+                        <p style="font-size: 0.75rem; color: #6b7280; margin-top: 5px;">Automatically applies 2026 standard deduction and progressive brackets</p>
                     </div>
 
                     <div class="input-group">
@@ -442,9 +435,9 @@
                     </div>
 
                     <div class="input-group">
-                        <label for="otherTaxRate">Other Taxes (FICA, etc.) (%)</label>
-                        <input type="number" id="otherTaxRate" min="0" max="20" step="0.5" value="7.65">
-                        <p style="font-size: 0.75rem; color: #6b7280; margin-top: 5px;">Default: 7.65% for Social Security + Medicare</p>
+                        <label for="ficaTaxRate">FICA Tax (%)</label>
+                        <input type="number" id="ficaTaxRate" min="0" max="20" step="0.01" value="7.65">
+                        <p style="font-size: 0.75rem; color: #6b7280; margin-top: 5px;">Social Security (6.2%) + Medicare (1.45%) = 7.65%</p>
                     </div>
                 </div>
             </div>
@@ -676,35 +669,6 @@
             </div>
         </div>
 
-        <!-- AI Compensation Analysis -->
-        <div class="chart-container">
-            <div class="section-header" onclick="toggleSection('aiAnalysisSection')">
-                <h2>🤖 AI Compensation Analysis</h2>
-                <span class="collapse-icon" id="aiAnalysisIcon">▼</span>
-            </div>
-            <div class="collapsible-content" id="aiAnalysisSection">
-                <p style="font-size: 0.9rem; color: #6b7280; margin-bottom: 15px;">
-                    Get AI-powered insights on your compensation package compared to market data
-                </p>
-                
-                <button 
-                    id="analyzeButton" 
-                    onclick="analyzeCompensation()" 
-                    style="width: 100%; padding: 12px 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-bottom: 15px;">
-                    Analyze My Compensation
-                </button>
-                
-                <div id="analysisResult" style="display: none; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px;">
-                    <div id="analysisContent"></div>
-                </div>
-                
-                <div id="analysisLoading" style="display: none; text-align: center; padding: 20px;">
-                    <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #e5e7eb; border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                    <p style="margin-top: 10px; color: #6b7280;">Analyzing your compensation...</p>
-                </div>
-            </div>
-        </div>
-
         <div class="note">
             <strong>Note:</strong> This calculator shows your initial grant vesting schedule (40/30/20/10) plus any refresher grants you add. 
             Refresher RSUs typically vest over 4 years (25% per year by default, adjustable). The calculator assumes each refresher grant starts 
@@ -735,63 +699,79 @@
             }
         }
 
-        // 2024 Federal tax brackets
-        const taxBrackets = {
-            single: [
-                { rate: 10, min: 0, max: 11600 },
-                { rate: 12, min: 11601, max: 47150 },
-                { rate: 22, min: 47151, max: 100525 },
-                { rate: 24, min: 100526, max: 191950 },
-                { rate: 32, min: 191951, max: 243725 },
-                { rate: 35, min: 243726, max: 609350 },
-                { rate: 37, min: 609351, max: Infinity }
-            ],
-            married: [
-                { rate: 10, min: 0, max: 23200 },
-                { rate: 12, min: 23201, max: 94300 },
-                { rate: 22, min: 94301, max: 201050 },
-                { rate: 24, min: 201051, max: 383900 },
-                { rate: 32, min: 383901, max: 487450 },
-                { rate: 35, min: 487451, max: 731200 },
-                { rate: 37, min: 731201, max: Infinity }
-            ],
-            head: [
-                { rate: 10, min: 0, max: 16550 },
-                { rate: 12, min: 16551, max: 63100 },
-                { rate: 22, min: 63101, max: 100500 },
-                { rate: 24, min: 100501, max: 191950 },
-                { rate: 32, min: 191951, max: 243700 },
-                { rate: 35, min: 243701, max: 609350 },
-                { rate: 37, min: 609351, max: Infinity }
-            ]
+        // 2026 Federal tax brackets and standard deductions
+        const taxData2026 = {
+            single: {
+                standardDeduction: 15000,
+                brackets: [
+                    { rate: 0.10, limit: 11925 },
+                    { rate: 0.12, limit: 48475 },
+                    { rate: 0.22, limit: 103350 },
+                    { rate: 0.24, limit: 197300 },
+                    { rate: 0.32, limit: 250525 },
+                    { rate: 0.35, limit: 626350 },
+                    { rate: 0.37, limit: Infinity }
+                ]
+            },
+            married: {
+                standardDeduction: 30000,
+                brackets: [
+                    { rate: 0.10, limit: 23850 },
+                    { rate: 0.12, limit: 96950 },
+                    { rate: 0.22, limit: 206700 },
+                    { rate: 0.24, limit: 394600 },
+                    { rate: 0.32, limit: 501050 },
+                    { rate: 0.35, limit: 751600 },
+                    { rate: 0.37, limit: Infinity }
+                ]
+            },
+            head: {
+                standardDeduction: 22500,
+                brackets: [
+                    { rate: 0.10, limit: 17000 },
+                    { rate: 0.12, limit: 64850 },
+                    { rate: 0.22, limit: 103350 },
+                    { rate: 0.24, limit: 197300 },
+                    { rate: 0.32, limit: 250500 },
+                    { rate: 0.35, limit: 626350 },
+                    { rate: 0.37, limit: Infinity }
+                ]
+            }
         };
 
-        function formatTaxRange(min, max) {
-            const formatNum = (val) => '$' + Math.round(val).toLocaleString();
-            if (max === Infinity) {
-                return 'Over ' + formatNum(min - 1);
-            }
-            return formatNum(min) + ' to ' + formatNum(max);
-        }
-
-        function updateFederalTaxBrackets() {
-            const filingStatus = document.getElementById('filingStatus').value;
-            const federalTaxRate = document.getElementById('federalTaxRate');
-            const currentValue = federalTaxRate.value;
+        // Calculate progressive federal tax
+        function calculateProgressiveFederalTax(grossIncome, filingStatus) {
+            const statusData = taxData2026[filingStatus];
+            const standardDeduction = statusData.standardDeduction;
+            const brackets = statusData.brackets;
             
-            const brackets = taxBrackets[filingStatus];
+            // Apply standard deduction
+            const taxableIncome = Math.max(0, grossIncome - standardDeduction);
             
-            federalTaxRate.innerHTML = brackets.map(bracket => 
-                `<option value="${bracket.rate}">${bracket.rate}% - ${formatTaxRange(bracket.min, bracket.max)}</option>`
-            ).join('');
-            
-            // Try to restore previous selection or default to first option
-            if (currentValue && federalTaxRate.querySelector(`option[value="${currentValue}"]`)) {
-                federalTaxRate.value = currentValue;
+            if (taxableIncome <= 0) {
+                return 0;
             }
             
-            saveInputs();
-            updateDisplay();
+            let totalTax = 0;
+            let previousLimit = 0;
+            
+            for (let i = 0; i < brackets.length; i++) {
+                const bracket = brackets[i];
+                const bracketLimit = bracket.limit;
+                
+                if (taxableIncome > previousLimit) {
+                    const taxableInBracket = Math.min(taxableIncome, bracketLimit) - previousLimit;
+                    totalTax += taxableInBracket * bracket.rate;
+                    
+                    if (taxableIncome <= bracketLimit) {
+                        break;
+                    }
+                }
+                
+                previousLimit = bracketLimit;
+            }
+            
+            return totalTax;
         }
         
         let stackedChart, lineChart;
@@ -802,7 +782,7 @@
                 'baseSalary', 'bonusPercent', 'signOnBonus',
                 'stockYear1', 'stockYear2', 'stockYear3', 'stockYear4', 'stockGrowth',
                 'initialGrant', 'vestingSchedule', 'refresherYear2', 'refresherYear3', 'refresherYear4', 'refresherVesting',
-                'filingStatus', 'federalTaxRate', 'stateTaxRate', 'otherTaxRate'
+                'filingStatus', 'stateTaxRate', 'ficaTaxRate'
             ];
             
             const values = {};
@@ -813,6 +793,10 @@
             
             // Handle checkbox separately
             values['enableTax'] = document.getElementById('enableTax').checked;
+            
+            // Save Select2 dropdowns (company and job track)
+            values['levelsCompany'] = $('#levelsCompany').val();
+            values['levelsTrack'] = $('#levelsTrack').val();
             
             localStorage.setItem('databricksCompCalc', JSON.stringify(values));
         }
@@ -833,6 +817,14 @@
                             }
                         }
                     });
+                    
+                    // Load Select2 values if they exist
+                    if (values['levelsCompany']) {
+                        $('#levelsCompany').val(values['levelsCompany']);
+                    }
+                    if (values['levelsTrack']) {
+                        $('#levelsTrack').val(values['levelsTrack']);
+                    }
                 } catch (e) {
                     console.error('Error loading saved data:', e);
                 }
@@ -870,10 +862,9 @@
 
             // Tax calculation
             const enableTax = document.getElementById('enableTax').checked;
-            const federalTaxRate = parseFloat(document.getElementById('federalTaxRate').value) / 100;
+            const filingStatus = document.getElementById('filingStatus').value;
             const stateTaxRate = parseFloat(document.getElementById('stateTaxRate').value) / 100;
-            const otherTaxRate = parseFloat(document.getElementById('otherTaxRate').value) / 100;
-            const totalTaxRate = enableTax ? (federalTaxRate + stateTaxRate + otherTaxRate) : 0;
+            const ficaTaxRate = parseFloat(document.getElementById('ficaTaxRate').value) / 100;
 
             const years = [];
             
@@ -905,7 +896,16 @@
                 const totalSharesVested = initialSharesVested + refresherSharesVested;
                 const stockValue = totalSharesVested * stockPrices[i];
                 const totalComp = currentBaseSalary + bonus + signOn + stockValue;
-                const afterTaxComp = Math.round(totalComp * (1 - totalTaxRate));
+                
+                // Calculate progressive taxes
+                let afterTaxComp = totalComp;
+                if (enableTax) {
+                    const federalTax = calculateProgressiveFederalTax(totalComp, filingStatus);
+                    const stateTax = totalComp * stateTaxRate;
+                    const ficaTax = totalComp * ficaTaxRate;
+                    const totalTax = federalTax + stateTax + ficaTax;
+                    afterTaxComp = Math.round(totalComp - totalTax);
+                }
                 
                 years.push({
                     year: i + 1,
@@ -1110,7 +1110,7 @@
             const inputs = [
                 'baseSalary', 'bonusPercent', 'signOnBonus',
                 'initialGrant', 'vestingSchedule', 'refresherYear2', 'refresherYear3', 'refresherYear4', 'refresherVesting',
-                'enableTax', 'federalTaxRate', 'stateTaxRate', 'otherTaxRate'
+                'enableTax', 'filingStatus', 'stateTaxRate', 'ficaTaxRate'
             ];
 
             inputs.forEach(id => {
@@ -1119,11 +1119,6 @@
                     saveInputs();
                     updateDisplay();
                 });
-            });
-
-            // Filing status changes the tax brackets
-            document.getElementById('filingStatus').addEventListener('change', function() {
-                updateFederalTaxBrackets();
             });
 
             // Special handling for stock inputs
@@ -1182,119 +1177,8 @@
             iframe.src = `https://www.levels.fyi/charts_embed.html?company=${company}&track=${encodedTrack}&hide_selector=true`;
         }
 
-        // Analyze compensation using Claude API
-        async function analyzeCompensation() {
-            const button = document.getElementById('analyzeButton');
-            const loading = document.getElementById('analysisLoading');
-            const result = document.getElementById('analysisResult');
-            const content = document.getElementById('analysisContent');
-            
-            // Get user's compensation data
-            const data = calculateComp();
-            const company = document.getElementById('levelsCompany').value;
-            const track = document.getElementById('levelsTrack').value;
-            const baseSalary = document.getElementById('baseSalary').value;
-            const bonusPercent = document.getElementById('bonusPercent').value;
-            const signOnBonus = document.getElementById('signOnBonus').value;
-            const initialGrant = document.getElementById('initialGrant').value;
-            const stockPrice = document.getElementById('stockYear1').value;
-            const vestingSchedule = document.getElementById('vestingSchedule').value === 'front' ? '40/30/20/10' : '25/25/25/25';
-            
-            // Calculate total comp values
-            const year1TC = data[0].totalComp;
-            const year4TC = data[3].totalComp;
-            const avgTC = data.reduce((sum, y) => sum + y.totalComp, 0) / 4;
-            
-            // Show loading state
-            button.disabled = true;
-            button.style.opacity = '0.6';
-            button.textContent = 'Analyzing...';
-            loading.style.display = 'block';
-            result.style.display = 'none';
-            
-            try {
-                const response = await fetch('https://api.anthropic.com/v1/messages', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        model: 'claude-sonnet-4-20250514',
-                        max_tokens: 1000,
-                        messages: [{
-                            role: 'user',
-                            content: `You are a compensation expert analyzing a job offer. Please analyze this compensation package and provide insights.
-
-**Job Details:**
-- Company: ${company}
-- Role: ${track}
-
-**Compensation Package:**
-- Base Salary: $${Number(baseSalary).toLocaleString()}
-- Annual Bonus: ${bonusPercent}%
-- Sign-On Bonus: $${Number(signOnBonus).toLocaleString()}
-- RSU Grant: ${initialGrant} shares at $${stockPrice}/share
-- Vesting Schedule: ${vestingSchedule}
-
-**Total Compensation:**
-- Year 1 TC: $${year1TC.toLocaleString()}
-- Year 4 TC: $${year4TC.toLocaleString()}
-- 4-Year Average TC: $${Math.round(avgTC).toLocaleString()}
-
-Please provide a concise analysis (3-4 paragraphs) covering:
-1. How this package compares to typical ${track} compensation at ${company} and similar companies (if you have knowledge of typical ranges)
-2. Estimated percentile ranking (if you can reasonably estimate based on the company/role)
-3. Strengths and weaknesses of this specific package
-4. 2-3 specific, actionable negotiation recommendations
-
-Be direct and specific. Use your knowledge of typical compensation ranges for this role/company. If you don't have specific data, acknowledge that and provide general guidance based on the role level and company tier.`
-                        }]
-                    })
-                });
-
-                const apiData = await response.json();
-                
-                if (apiData.content && apiData.content[0] && apiData.content[0].text) {
-                    const analysis = apiData.content[0].text;
-                    
-                    // Format the analysis with nice styling
-                    content.innerHTML = `
-                        <div style="line-height: 1.8; color: #374151;">
-                            ${analysis.split('\n\n').map(para => `<p style="margin-bottom: 15px;">${para}</p>`).join('')}
-                        </div>
-                        <div style="margin-top: 20px; padding: 15px; background: #dbeafe; border-left: 4px solid #3b82f6; border-radius: 4px;">
-                            <p style="font-size: 0.85rem; color: #1e40af; margin: 0;">
-                                <strong>Note:</strong> This analysis is based on AI knowledge and general market data. For the most accurate comparison, review the levels.fyi data below and consult with a compensation specialist.
-                            </p>
-                        </div>
-                    `;
-                    
-                    result.style.display = 'block';
-                } else {
-                    throw new Error('Unexpected API response format');
-                }
-                
-            } catch (error) {
-                console.error('Analysis error:', error);
-                content.innerHTML = `
-                    <div style="color: #dc2626; line-height: 1.6;">
-                        <p><strong>Analysis Error</strong></p>
-                        <p>Unable to generate compensation analysis. Please check your inputs and try again.</p>
-                        <p style="font-size: 0.85rem; color: #6b7280; margin-top: 10px;">Error: ${error.message}</p>
-                    </div>
-                `;
-                result.style.display = 'block';
-            } finally {
-                loading.style.display = 'none';
-                button.disabled = false;
-                button.style.opacity = '1';
-                button.textContent = 'Analyze My Compensation';
-            }
-        }
-
         // Initialize
         loadInputs();
-        updateFederalTaxBrackets(); // Populate tax brackets on load
         setupInputListeners();
         
         // Initialize Select2 for searchable dropdowns
@@ -1311,13 +1195,19 @@ Be direct and specific. Use your knowledge of typical compensation ranges for th
                 width: '100%'
             });
             
+            // Trigger Select2 to update with loaded values
+            $('#levelsCompany').trigger('change.select2');
+            $('#levelsTrack').trigger('change.select2');
+            
             // Update iframe when Select2 dropdowns change
             $('#levelsCompany').on('change', function() {
                 updateLevelsIframe();
+                saveInputs(); // Save to localStorage
             });
             
             $('#levelsTrack').on('change', function() {
                 updateLevelsIframe();
+                saveInputs(); // Save to localStorage
             });
         });
         
