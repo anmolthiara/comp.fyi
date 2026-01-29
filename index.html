@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compensation Calculator</title>
     <link rel="manifest" href="/manifest.webmanifest">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <!-- Select2 for searchable dropdowns -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -14,6 +15,26 @@
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'mono': ['"IBM Plex Mono"', 'monospace']
+                    }
+                }
+            }
+        }
+        
+        // Suppress Tailwind CDN warning
+        if (typeof window !== 'undefined') {
+            const originalWarn = console.warn;
+            console.warn = function(...args) {
+                if (args[0]?.includes?.('cdn.tailwindcss.com')) return;
+                originalWarn.apply(console, args);
+            };
+        }
+    </script>
     <style>
         * {
             margin: 0;
@@ -309,9 +330,15 @@
     </style>
 </head>
 
-<body>
+<body class="font-mono antialiased bg-white p-5 min-h-screen">
     <div class="container">
-        <h1>💼 Compensation Calculator</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h1 style="margin: 0;">💼 Compensation Calculator</h1>
+            <button onclick="resetCalculator()"
+                style="padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 500;">
+                Reset to Defaults
+            </button>
+        </div>
 
         <div class="inputs-grid-four">
             <!-- Cash Compensation -->
@@ -326,19 +353,19 @@
 
                     <div class="input-group">
                         <label for="baseSalary">Starting Base Salary ($)</label>
-                        <input type="number" id="baseSalary" min="0" step="1000" value="0">
+                        <input type="number" id="baseSalary" min="0" step="1000" placeholder="0">
                     </div>
 
                     <div class="input-group">
                         <label for="bonusPercent">Annual Bonus (%)</label>
-                        <input type="number" id="bonusPercent" min="0" max="100" step="0.5" value="0">
+                        <input type="number" id="bonusPercent" min="0" max="100" step="0.5" placeholder="0">
                         <p style="font-size: 0.75rem; color: #57534e; margin-top: 5px;">Applied to base salary each year
                         </p>
                     </div>
 
                     <div class="input-group">
                         <label for="signOnBonus">Sign-On Bonus ($)</label>
-                        <input type="number" id="signOnBonus" min="0" step="1000" value="0">
+                        <input type="number" id="signOnBonus" min="0" step="1000" placeholder="0">
                         <p style="font-size: 0.75rem; color: #57534e; margin-top: 5px;">One-time payment in Year 1</p>
                     </div>
                 </div>
@@ -353,12 +380,12 @@
                 <div class="collapsible-content" id="stockPriceSection">
                     <div class="input-group">
                         <label for="stockYear1">Year 1 Stock Price ($)</label>
-                        <input type="number" id="stockYear1" min="0" step="1" value="0">
+                        <input type="number" id="stockYear1" min="0" step="1" placeholder="0">
                     </div>
 
                     <div class="input-group">
                         <label for="stockGrowth">Annual Stock Growth (%)</label>
-                        <input type="number" id="stockGrowth" min="-100" max="500" step="1" value="0">
+                        <input type="number" id="stockGrowth" min="-100" max="500" step="1" placeholder="0">
                         <p style="font-size: 0.75rem; color: #57534e; margin-top: 5px;">Auto-calculates Years 2-4 prices
                             (0 = no growth)</p>
                     </div>
@@ -370,17 +397,17 @@
 
                     <div class="input-group">
                         <label for="stockYear2">Year 2 Stock Price ($)</label>
-                        <input type="number" id="stockYear2" min="0" step="1" value="0">
+                        <input type="number" id="stockYear2" min="0" step="1" placeholder="0">
                     </div>
 
                     <div class="input-group">
                         <label for="stockYear3">Year 3 Stock Price ($)</label>
-                        <input type="number" id="stockYear3" min="0" step="1" value="0">
+                        <input type="number" id="stockYear3" min="0" step="1" placeholder="0">
                     </div>
 
                     <div class="input-group">
                         <label for="stockYear4">Year 4 Stock Price ($)</label>
-                        <input type="number" id="stockYear4" min="0" step="1" value="0">
+                        <input type="number" id="stockYear4" min="0" step="1" placeholder="0">
                     </div>
                 </div>
             </div>
@@ -394,7 +421,7 @@
                 <div class="collapsible-content" id="rsuGrantsSection">
                     <div class="input-group">
                         <label for="initialGrant">Initial Grant (RSUs)</label>
-                        <input type="number" id="initialGrant" min="0" step="10" value="0">
+                        <input type="number" id="initialGrant" min="0" step="10" placeholder="0">
                     </div>
 
                     <div class="input-group">
@@ -413,17 +440,17 @@
 
                     <div class="input-group">
                         <label for="refresherYear2">Year 2 Grant (RSUs)</label>
-                        <input type="number" id="refresherYear2" min="0" step="10" value="0">
+                        <input type="number" id="refresherYear2" min="0" step="10" placeholder="0">
                     </div>
 
                     <div class="input-group">
                         <label for="refresherYear3">Year 3 Grant (RSUs)</label>
-                        <input type="number" id="refresherYear3" min="0" step="10" value="0">
+                        <input type="number" id="refresherYear3" min="0" step="10" placeholder="0">
                     </div>
 
                     <div class="input-group">
                         <label for="refresherYear4">Year 4 Grant (RSUs)</label>
-                        <input type="number" id="refresherYear4" min="0" step="10" value="0">
+                        <input type="number" id="refresherYear4" min="0" step="10" placeholder="0">
                     </div>
 
                     <div class="input-group">
@@ -466,7 +493,7 @@
 
                     <div class="input-group">
                         <label for="stateTaxRate">State Tax Rate (%)</label>
-                        <input type="number" id="stateTaxRate" min="0" max="20" step="0.5" value="0">
+                        <input type="number" id="stateTaxRate" min="0" max="20" step="0.5" placeholder="0">
                         <p style="font-size: 0.75rem; color: #57534e; margin-top: 5px;">CA: ~9-13%, NY: ~4-11%, TX/FL:
                             0%</p>
                     </div>
@@ -723,10 +750,6 @@
             <br><br>
             <strong>💾 Auto-Save:</strong> Your inputs are automatically saved in your browser and will persist when you
             refresh the page.
-            <button onclick="resetCalculator()"
-                style="margin-left: 10px; padding: 5px 15px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">
-                Reset to Defaults
-            </button>
         </div>
     </div>
 
@@ -893,26 +916,26 @@
             const vestingSchedule = getVestingSchedule();
 
             const stockPrices = [
-                parseFloat(document.getElementById('stockYear1').value),
-                parseFloat(document.getElementById('stockYear2').value),
-                parseFloat(document.getElementById('stockYear3').value),
-                parseFloat(document.getElementById('stockYear4').value)
+                parseFloat(document.getElementById('stockYear1').value) || 0,
+                parseFloat(document.getElementById('stockYear2').value) || 0,
+                parseFloat(document.getElementById('stockYear3').value) || 0,
+                parseFloat(document.getElementById('stockYear4').value) || 0
             ];
 
             const refresherGrants = [
                 0, // Year 1 - no refresher
-                parseFloat(document.getElementById('refresherYear2').value),
-                parseFloat(document.getElementById('refresherYear3').value),
-                parseFloat(document.getElementById('refresherYear4').value)
+                parseFloat(document.getElementById('refresherYear2').value) || 0,
+                parseFloat(document.getElementById('refresherYear3').value) || 0,
+                parseFloat(document.getElementById('refresherYear4').value) || 0
             ];
 
-            const refresherVestingPercent = parseFloat(document.getElementById('refresherVesting').value) / 100;
+            const refresherVestingPercent = parseFloat(document.getElementById('refresherVesting').value) / 100 || 0;
 
             // Tax calculation
             const enableTax = document.getElementById('enableTax').checked;
             const filingStatus = document.getElementById('filingStatus').value;
-            const stateTaxRate = parseFloat(document.getElementById('stateTaxRate').value) / 100;
-            const ficaTaxRate = parseFloat(document.getElementById('ficaTaxRate').value) / 100;
+            const stateTaxRate = parseFloat(document.getElementById('stateTaxRate').value) / 100 || 0;
+            const ficaTaxRate = parseFloat(document.getElementById('ficaTaxRate').value) / 100 || 0;
 
             const years = [];
 
