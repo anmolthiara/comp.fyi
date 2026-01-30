@@ -1,10 +1,5 @@
 // Vercel Serverless Function for Gemini API
-export default async function handler(req, res) {
-  // Only allow POST requests
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+module.exports = async (req, res) => {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -16,12 +11,18 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
+  // Only allow POST requests
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   try {
     // Get API key from environment variable
     const apiKey = process.env.GEMINI_API_KEY;
     
     if (!apiKey) {
-      return res.status(500).json({ error: 'API key not configured' });
+      console.error('GEMINI_API_KEY not found in environment variables');
+      return res.status(500).json({ error: 'API key not configured on server' });
     }
 
     // Get the prompt from request body
@@ -31,9 +32,11 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Prompt is required' });
     }
 
+    console.log('Calling Gemini API...');
+
     // Call Gemini API
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: {
@@ -53,12 +56,14 @@ export default async function handler(req, res) {
       }
     );
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error?.message || 'API request failed');
+      console.error('Gemini API error:', data);
+      throw new Error(data.error?.message || 'API request failed');
     }
 
-    const data = await response.json();
+    console.log('Gemini API success');
     
     // Return the analysis
     return res.status(200).json(data);
@@ -69,4 +74,4 @@ export default async function handler(req, res) {
       error: error.message || 'Failed to analyze compensation' 
     });
   }
-}
+};
