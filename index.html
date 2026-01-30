@@ -1059,6 +1059,32 @@
                 </div>
             </div>
 
+            <!-- ISO Detailed Breakdown Table -->
+            <div class="table-container">
+                <div class="section-header" onclick="toggleSection('isoTableSection')">
+                    <h2>Year-by-Year Breakdown</h2>
+                    <span class="collapse-icon" id="isoTableIcon">▼</span>
+                </div>
+                <div class="collapsible-content" id="isoTableSection">
+                    <table id="isoBreakdownTable">
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th>Base Salary</th>
+                                <th>Bonus</th>
+                                <th>Sign-On</th>
+                                <th>Total Cash</th>
+                                <th>ISO Upside (Annual)</th>
+                                <th>Total w/ ISO</th>
+                            </tr>
+                        </thead>
+                        <tbody id="isoTableBody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <div class="note">
                 <strong>Note:</strong> ISO (Incentive Stock Options) calculations are estimates. Actual tax treatment depends on holding periods, AMT implications, and individual circumstances. 
                 <br><br>
@@ -1270,6 +1296,27 @@
             return document.body.classList.contains('dark-mode') ? '#404040' : '#d1d5db';
         }
 
+        function updateISOTable(years) {
+            const tbody = document.getElementById('isoTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            years.forEach(year => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${year.year}</td>
+                    <td>$${Math.round(year.baseSalary).toLocaleString()}</td>
+                    <td>$${Math.round(year.bonus).toLocaleString()}</td>
+                    <td>$${Math.round(year.signOn).toLocaleString()}</td>
+                    <td>$${Math.round(year.totalCash).toLocaleString()}</td>
+                    <td>$${Math.round(year.isoUpside).toLocaleString()}</td>
+                    <td><strong>$${Math.round(year.totalWithISO).toLocaleString()}</strong></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
         function updateISOScenarioChart() {
             // Get inputs
             const isoBaseSalary = parseFloat(document.getElementById('isoBaseSalary').value) || 0;
@@ -1319,15 +1366,23 @@
                 const currentBaseSalary = isoBaseSalary * Math.pow(annualRaiseMultiplier, i);
                 const bonus = currentBaseSalary * (isoBonusPercent / 100);
                 const signOn = i === 0 ? isoSignOnBonus : 0;
-                const guaranteedComp = currentBaseSalary + bonus + signOn;
-                const totalWithISO = guaranteedComp + annualizedISOUpside;
+                const totalCash = currentBaseSalary + bonus + signOn;
+                const totalWithISO = totalCash + annualizedISOUpside;
                 
                 years.push({
                     year: `Year ${i + 1}`,
-                    guaranteed: guaranteedComp,
-                    totalWithISO: totalWithISO
+                    baseSalary: currentBaseSalary,
+                    bonus: bonus,
+                    signOn: signOn,
+                    totalCash: totalCash,
+                    isoUpside: annualizedISOUpside,
+                    totalWithISO: totalWithISO,
+                    guaranteed: totalCash  // For chart compatibility
                 });
             }
+
+            // Update table
+            updateISOTable(years);
 
             // Create or update chart
             const ctx = document.getElementById('isoScenarioChart');
