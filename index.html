@@ -373,48 +373,7 @@
                 </div>
             </div>
 
-            <!-- Stock Prices -->
-            <div class="input-section">
-                <div class="section-header" onclick="toggleSection('stockPriceSection')">
-                    <h2>Stock Price per Year</h2>
-                    <span class="collapse-icon" id="stockPriceIcon">▼</span>
-                </div>
-                <div class="collapsible-content" id="stockPriceSection">
-                    <div class="input-group">
-                        <label for="stockYear1">Year 1 Stock Price ($)</label>
-                        <input type="number" id="stockYear1" min="0" step="1" placeholder="0">
-                    </div>
-
-                    <div class="input-group">
-                        <label for="stockGrowth">Annual Stock Growth (%)</label>
-                        <input type="number" id="stockGrowth" min="-100" max="500" step="1" placeholder="0">
-                        <p style="font-size: 0.75rem; color: #57534e; margin-top: 5px;">Auto-calculates Years 2-4 prices
-                            (0 = no growth)</p>
-                    </div>
-
-                    <div style="border-top: 1px solid #d1d5db; margin: 15px 0; padding-top: 15px;">
-                        <p style="font-size: 0.85rem; color: #57534e; margin-bottom: 10px; font-weight: 500;">Or
-                            manually set each year:</p>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="stockYear2">Year 2 Stock Price ($)</label>
-                        <input type="number" id="stockYear2" min="0" step="1" placeholder="0">
-                    </div>
-
-                    <div class="input-group">
-                        <label for="stockYear3">Year 3 Stock Price ($)</label>
-                        <input type="number" id="stockYear3" min="0" step="1" placeholder="0">
-                    </div>
-
-                    <div class="input-group">
-                        <label for="stockYear4">Year 4 Stock Price ($)</label>
-                        <input type="number" id="stockYear4" min="0" step="1" placeholder="0">
-                    </div>
-                </div>
-            </div>
-
-            <!-- RSU Refreshers -->
+            <!-- RSU Grants -->
             <div class="input-section">
                 <div class="section-header" onclick="toggleSection('rsuGrantsSection')">
                     <h2>RSU Grants</h2>
@@ -460,6 +419,47 @@
                         <input type="number" id="refresherVesting" min="0" max="100" step="1" value="25">
                         <p style="font-size: 0.75rem; color: #57534e; margin-top: 5px;">% that vests in year granted
                             (typical: 25% for 4-yr vest)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stock Prices -->
+            <div class="input-section">
+                <div class="section-header" onclick="toggleSection('stockPriceSection')">
+                    <h2>Stock Price per Year</h2>
+                    <span class="collapse-icon" id="stockPriceIcon">▼</span>
+                </div>
+                <div class="collapsible-content" id="stockPriceSection">
+                    <div class="input-group">
+                        <label for="stockYear1">Year 1 Stock Price ($)</label>
+                        <input type="number" id="stockYear1" min="0" step="1" placeholder="0">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="stockGrowth">Annual Stock Growth (%)</label>
+                        <input type="number" id="stockGrowth" min="-100" max="500" step="1" placeholder="0">
+                        <p style="font-size: 0.75rem; color: #57534e; margin-top: 5px;">Auto-calculates Years 2-4 prices
+                            (0 = no growth)</p>
+                    </div>
+
+                    <div style="border-top: 1px solid #d1d5db; margin: 15px 0; padding-top: 15px;">
+                        <p style="font-size: 0.85rem; color: #57534e; margin-bottom: 10px; font-weight: 500;">Or
+                            manually set each year:</p>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="stockYear2">Year 2 Stock Price ($)</label>
+                        <input type="number" id="stockYear2" min="0" step="1" placeholder="0">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="stockYear3">Year 3 Stock Price ($)</label>
+                        <input type="number" id="stockYear3" min="0" step="1" placeholder="0">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="stockYear4">Year 4 Stock Price ($)</label>
+                        <input type="number" id="stockYear4" min="0" step="1" placeholder="0">
                     </div>
                 </div>
             </div>
@@ -514,23 +514,23 @@
         <div class="summary-grid">
             <div class="summary-card">
                 <div class="summary-label">Year 1 Total</div>
-                <div class="summary-value" id="year1Total">$0</div>
+                <div class="summary-value" id="year1Total" onclick="copyToClipboard(this)" style="cursor: pointer;" title="Click to copy">$0</div>
                 <div class="summary-label" style="font-size: 0.75rem; margin-top: 5px;" id="year1TotalAfterTax"></div>
             </div>
             <div class="summary-card">
                 <div class="summary-label">Year 4 Total</div>
-                <div class="summary-value" id="year4Total">$0</div>
+                <div class="summary-value" id="year4Total" onclick="copyToClipboard(this)" style="cursor: pointer;" title="Click to copy">$0</div>
                 <div class="summary-label" style="font-size: 0.75rem; margin-top: 5px;" id="year4TotalAfterTax"></div>
             </div>
             <div class="summary-card">
                 <div class="summary-label">4-Year Total</div>
-                <div class="summary-value" id="fourYearTotal">$0</div>
+                <div class="summary-value" id="fourYearTotal" onclick="copyToClipboard(this)" style="cursor: pointer;" title="Click to copy">$0</div>
                 <div class="summary-label" style="font-size: 0.75rem; margin-top: 5px;" id="fourYearTotalAfterTax">
                 </div>
             </div>
             <div class="summary-card">
                 <div class="summary-label">Average Annual</div>
-                <div class="summary-value" id="avgAnnual">$0</div>
+                <div class="summary-value" id="avgAnnual" onclick="copyToClipboard(this)" style="cursor: pointer;" title="Click to copy">$0</div>
                 <div class="summary-label" style="font-size: 0.75rem; margin-top: 5px;" id="avgAnnualAfterTax"></div>
             </div>
         </div>
@@ -756,6 +756,54 @@
     </div>
 
     <script>
+        // Copy to clipboard function
+        function copyToClipboard(element) {
+            const text = element.textContent.trim();
+            
+            // Try modern clipboard API first
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showCopyFeedback(element);
+                }).catch(() => {
+                    // Fallback for mobile or older browsers
+                    fallbackCopy(text, element);
+                });
+            } else {
+                // Fallback for older browsers
+                fallbackCopy(text, element);
+            }
+        }
+
+        function fallbackCopy(text, element) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // For mobile
+            
+            try {
+                document.execCommand('copy');
+                showCopyFeedback(element);
+            } catch (err) {
+                console.error('Copy failed:', err);
+            }
+            
+            document.body.removeChild(textarea);
+        }
+
+        function showCopyFeedback(element) {
+            const originalText = element.textContent;
+            element.textContent = '✓ Copied!';
+            element.style.color = '#10b981';
+            
+            setTimeout(() => {
+                element.textContent = originalText;
+                element.style.color = '';
+            }, 1500);
+        }
+
         function resetCalculator() {
             if (confirm('Are you sure you want to reset all values to defaults? This cannot be undone.')) {
                 localStorage.removeItem('databricksCompCalc');
