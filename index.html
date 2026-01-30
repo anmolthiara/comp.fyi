@@ -691,17 +691,6 @@
                 </div>
             </div>
 
-            <!-- Line Chart -->
-            <div class="chart-container">
-                <div class="section-header" onclick="toggleSection('lineChartSection')">
-                    <h2>Total Compensation Trend</h2>
-                    <span class="collapse-icon" id="lineChartIcon">▼</span>
-                </div>
-                <div class="collapsible-content" id="lineChartSection">
-                    <canvas id="lineChart"></canvas>
-                </div>
-            </div>
-
             <!-- Detailed Table -->
             <div class="chart-container">
                 <div class="section-header" onclick="toggleSection('detailedTableSection')">
@@ -2117,7 +2106,7 @@ Format your response in clear sections with bullet points. Be specific with sala
             return totalTax;
         }
 
-        let stackedChart, lineChart;
+        let stackedChart;
 
         // Save inputs to localStorage
         function saveInputs() {
@@ -2388,81 +2377,6 @@ Format your response in clear sections with bullet points. Be specific with sala
                         },
                         y: {
                             stacked: true,
-                            ticks: {
-                                color: getChartTextColor(),
-                                callback: function (value) {
-                                    return '$' + (value / 1000).toFixed(0) + 'k';
-                                }
-                            },
-                            grid: {
-                                color: getChartGridColor()
-                            }
-                        }
-                    },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
-                                }
-                            }
-                        },
-                        legend: {
-                            labels: {
-                                color: getChartTextColor()
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Line Chart
-            if (lineChart) lineChart.destroy();
-            const lineCtx = document.getElementById('lineChart').getContext('2d');
-
-            const lineDatasets = [{
-                label: 'Total Compensation',
-                data: data.map(d => d.totalComp),
-                borderColor: '#ff630f',
-                backgroundColor: 'rgba(255, 99, 15, 0.1)',
-                borderWidth: 3,
-                tension: 0.4,
-                fill: true
-            }];
-
-            // Add after-tax line if tax is enabled
-            if (enableTax) {
-                lineDatasets.push({
-                    label: 'After Tax Compensation',
-                    data: data.map(d => d.afterTaxComp),
-                    borderColor: '#a78bfa',
-                    backgroundColor: 'rgba(167, 139, 250, 0.1)',
-                    borderWidth: 3,
-                    borderDash: [10, 5],
-                    tension: 0.4,
-                    fill: true
-                });
-            }
-
-            lineChart = new Chart(lineCtx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: lineDatasets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    scales: {
-                        x: {
-                            ticks: {
-                                color: getChartTextColor()
-                            },
-                            grid: {
-                                color: getChartGridColor()
-                            }
-                        },
-                        y: {
                             ticks: {
                                 color: getChartTextColor(),
                                 callback: function (value) {
