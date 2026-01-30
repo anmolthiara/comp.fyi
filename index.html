@@ -159,6 +159,43 @@
             color: var(--text-primary);
         }
 
+        /* Custom autocomplete styling */
+        .autocomplete-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .autocomplete-items {
+            position: absolute;
+            border: 2px solid var(--border-color);
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 250px;
+            overflow-y: auto;
+            background: var(--bg-card);
+            border-radius: 0 0 6px 6px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .autocomplete-items div:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .autocomplete-active {
+            background-color: var(--bg-secondary) !important;
+        }
+
         .input-group input[type="number"],
         .input-group input[type="text"],
         .input-group select {
@@ -705,59 +742,15 @@
                 <div class="inputs-grid" style="margin-bottom: 20px;">
                     <div class="input-group">
                         <label for="aiRole">Role/Title</label>
-                        <select id="aiRole" style="width: 100%;">
-                            <option value="">Select or type a role...</option>
-                            <option value="Software Engineer">Software Engineer</option>
-                            <option value="Senior Software Engineer">Senior Software Engineer</option>
-                            <option value="Staff Software Engineer">Staff Software Engineer</option>
-                            <option value="Principal Software Engineer">Principal Software Engineer</option>
-                            <option value="Engineering Manager">Engineering Manager</option>
-                            <option value="Senior Engineering Manager">Senior Engineering Manager</option>
-                            <option value="Product Manager">Product Manager</option>
-                            <option value="Senior Product Manager">Senior Product Manager</option>
-                            <option value="Principal Product Manager">Principal Product Manager</option>
-                            <option value="Data Scientist">Data Scientist</option>
-                            <option value="Senior Data Scientist">Senior Data Scientist</option>
-                            <option value="Machine Learning Engineer">Machine Learning Engineer</option>
-                            <option value="Senior ML Engineer">Senior ML Engineer</option>
-                            <option value="DevOps Engineer">DevOps Engineer</option>
-                            <option value="Site Reliability Engineer">Site Reliability Engineer</option>
-                            <option value="Security Engineer">Security Engineer</option>
-                            <option value="Frontend Engineer">Frontend Engineer</option>
-                            <option value="Backend Engineer">Backend Engineer</option>
-                            <option value="Full Stack Engineer">Full Stack Engineer</option>
-                            <option value="Mobile Engineer (iOS)">Mobile Engineer (iOS)</option>
-                            <option value="Mobile Engineer (Android)">Mobile Engineer (Android)</option>
-                            <option value="Technical Program Manager">Technical Program Manager</option>
-                            <option value="Product Designer">Product Designer</option>
-                            <option value="Data Engineer">Data Engineer</option>
-                        </select>
+                        <div class="autocomplete-wrapper">
+                            <input type="text" id="aiRole" placeholder="e.g., Senior Software Engineer" autocomplete="off">
+                        </div>
                     </div>
                     <div class="input-group">
                         <label for="aiLocation">Location</label>
-                        <select id="aiLocation" style="width: 100%;">
-                            <option value="">Select or type a location...</option>
-                            <option value="San Francisco, CA">San Francisco, CA</option>
-                            <option value="San Jose, CA">San Jose, CA</option>
-                            <option value="Mountain View, CA">Mountain View, CA</option>
-                            <option value="Palo Alto, CA">Palo Alto, CA</option>
-                            <option value="Sunnyvale, CA">Sunnyvale, CA</option>
-                            <option value="Santa Clara, CA">Santa Clara, CA</option>
-                            <option value="Cupertino, CA">Cupertino, CA</option>
-                            <option value="Seattle, WA">Seattle, WA</option>
-                            <option value="Austin, TX">Austin, TX</option>
-                            <option value="New York, NY">New York, NY</option>
-                            <option value="Boston, MA">Boston, MA</option>
-                            <option value="Los Angeles, CA">Los Angeles, CA</option>
-                            <option value="San Diego, CA">San Diego, CA</option>
-                            <option value="Denver, CO">Denver, CO</option>
-                            <option value="Portland, OR">Portland, OR</option>
-                            <option value="Chicago, IL">Chicago, IL</option>
-                            <option value="Atlanta, GA">Atlanta, GA</option>
-                            <option value="Raleigh, NC">Raleigh, NC</option>
-                            <option value="Washington, DC">Washington, DC</option>
-                            <option value="Miami, FL">Miami, FL</option>
-                        </select>
+                        <div class="autocomplete-wrapper">
+                            <input type="text" id="aiLocation" placeholder="e.g., San Francisco, CA" autocomplete="off">
+                        </div>
                     </div>
                     <div class="input-group">
                         <label for="aiYearsExp">Years of Experience</label>
@@ -767,7 +760,7 @@
                         <label for="aiCompanySize">Company Size</label>
                         <select id="aiCompanySize">
                             <option value="">Select size...</option>
-                            <option value="Startup (<50)">Startup (<50)< /option>
+                            <option value="Startup (<50)">Startup (<50)</option>
                             <option value="Small (50-200)">Small (50-200)</option>
                             <option value="Medium (200-1000)">Medium (200-1000)</option>
                             <option value="Large (1000-10000)">Large (1000-10000)</option>
@@ -1368,8 +1361,8 @@ Format your response in clear sections with bullet points. Be specific with sala
         // AI Analyzer - Save and Load inputs
         function saveAIInputs() {
             const aiInputs = {
-                role: $('#aiRole').val(),
-                location: $('#aiLocation').val(),
+                role: document.getElementById('aiRole').value,
+                location: document.getElementById('aiLocation').value,
                 yearsExp: document.getElementById('aiYearsExp').value,
                 companySize: document.getElementById('aiCompanySize').value
             };
@@ -1381,8 +1374,8 @@ Format your response in clear sections with bullet points. Be specific with sala
             if (saved) {
                 try {
                     const inputs = JSON.parse(saved);
-                    if (inputs.role) $('#aiRole').val(inputs.role).trigger('change');
-                    if (inputs.location) $('#aiLocation').val(inputs.location).trigger('change');
+                    if (inputs.role) document.getElementById('aiRole').value = inputs.role;
+                    if (inputs.location) document.getElementById('aiLocation').value = inputs.location;
                     if (inputs.yearsExp) document.getElementById('aiYearsExp').value = inputs.yearsExp;
                     if (inputs.companySize) document.getElementById('aiCompanySize').value = inputs.companySize;
                 } catch (e) {
@@ -1391,23 +1384,116 @@ Format your response in clear sections with bullet points. Be specific with sala
             }
         }
 
-        // Initialize Select2 for AI analyzer dropdowns
-        function initializeAISelect2() {
-            $('#aiRole').select2({
-                tags: true,
-                placeholder: 'Select or type a role...',
-                allowClear: true
-            });
-            $('#aiLocation').select2({
-                tags: true,
-                placeholder: 'Select or type a location...',
-                allowClear: true
-            });
-
-            // Save on change
-            $('#aiRole, #aiLocation').on('change', saveAIInputs);
+        // Add event listeners for AI analyzer inputs
+        function setupAIInputListeners() {
+            document.getElementById('aiRole').addEventListener('input', saveAIInputs);
+            document.getElementById('aiLocation').addEventListener('input', saveAIInputs);
             document.getElementById('aiYearsExp').addEventListener('input', saveAIInputs);
             document.getElementById('aiCompanySize').addEventListener('change', saveAIInputs);
+        }
+
+        // Custom Autocomplete Function
+        function autocomplete(inp, arr) {
+            let currentFocus;
+            
+            inp.addEventListener("input", function(e) {
+                let a, b, i, val = this.value;
+                closeAllLists();
+                if (!val) { return false; }
+                currentFocus = -1;
+                
+                a = document.createElement("DIV");
+                a.setAttribute("id", this.id + "autocomplete-list");
+                a.setAttribute("class", "autocomplete-items");
+                this.parentNode.appendChild(a);
+                
+                let count = 0;
+                for (i = 0; i < arr.length; i++) {
+                    if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                        b = document.createElement("DIV");
+                        b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+                        b.innerHTML += arr[i].substr(val.length);
+                        b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                        b.addEventListener("click", function(e) {
+                            inp.value = this.getElementsByTagName("input")[0].value;
+                            saveAIInputs();
+                            closeAllLists();
+                        });
+                        a.appendChild(b);
+                        count++;
+                        if (count >= 10) break; // Limit to 10 results
+                    }
+                }
+            });
+            
+            inp.addEventListener("keydown", function(e) {
+                let x = document.getElementById(this.id + "autocomplete-list");
+                if (x) x = x.getElementsByTagName("div");
+                if (e.keyCode == 40) {
+                    currentFocus++;
+                    addActive(x);
+                } else if (e.keyCode == 38) {
+                    currentFocus--;
+                    addActive(x);
+                } else if (e.keyCode == 13) {
+                    e.preventDefault();
+                    if (currentFocus > -1) {
+                        if (x) x[currentFocus].click();
+                    }
+                }
+            });
+            
+            function addActive(x) {
+                if (!x) return false;
+                removeActive(x);
+                if (currentFocus >= x.length) currentFocus = 0;
+                if (currentFocus < 0) currentFocus = (x.length - 1);
+                x[currentFocus].classList.add("autocomplete-active");
+            }
+            
+            function removeActive(x) {
+                for (let i = 0; i < x.length; i++) {
+                    x[i].classList.remove("autocomplete-active");
+                }
+            }
+            
+            function closeAllLists(elmnt) {
+                let x = document.getElementsByClassName("autocomplete-items");
+                for (let i = 0; i < x.length; i++) {
+                    if (elmnt != x[i] && elmnt != inp) {
+                        x[i].parentNode.removeChild(x[i]);
+                    }
+                }
+            }
+            
+            document.addEventListener("click", function (e) {
+                closeAllLists(e.target);
+            });
+        }
+
+        // Initialize autocomplete with role and location options
+        function initializeAutocomplete() {
+            const roles = [
+                "Software Engineer", "Senior Software Engineer", "Staff Software Engineer",
+                "Principal Software Engineer", "Engineering Manager", "Senior Engineering Manager",
+                "Product Manager", "Senior Product Manager", "Principal Product Manager",
+                "Data Scientist", "Senior Data Scientist", "Machine Learning Engineer",
+                "Senior ML Engineer", "DevOps Engineer", "Site Reliability Engineer",
+                "Security Engineer", "Frontend Engineer", "Backend Engineer",
+                "Full Stack Engineer", "Mobile Engineer (iOS)", "Mobile Engineer (Android)",
+                "Technical Program Manager", "Product Designer", "Data Engineer"
+            ];
+            
+            const locations = [
+                "San Francisco, CA", "San Jose, CA", "Mountain View, CA", "Palo Alto, CA",
+                "Sunnyvale, CA", "Santa Clara, CA", "Cupertino, CA", "Seattle, WA",
+                "Austin, TX", "New York, NY", "Boston, MA", "Los Angeles, CA",
+                "San Diego, CA", "Denver, CO", "Portland, OR", "Chicago, IL",
+                "Atlanta, GA", "Raleigh, NC", "Washington, DC", "Miami, FL"
+            ];
+            
+            autocomplete(document.getElementById("aiRole"), roles);
+            autocomplete(document.getElementById("aiLocation"), locations);
         }
 
         // Mode switching
@@ -2552,8 +2638,9 @@ Format your response in clear sections with bullet points. Be specific with sala
         loadInputs();
         setupInputListeners();
 
-        // Initialize AI Analyzer Select2 and load saved inputs
-        initializeAISelect2();
+        // Initialize AI Analyzer inputs and load saved values
+        setupAIInputListeners();
+        initializeAutocomplete();
         loadAIInputs();
 
         // Initialize Select2 for searchable dropdowns
