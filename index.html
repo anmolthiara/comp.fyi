@@ -38,6 +38,27 @@
         }
     </script>
     <style>
+        /* Dark mode variables */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #e5fbf8;
+            --bg-card: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #57534e;
+            --border-color: #e5e7eb;
+            --border-color-focus: #3b82f6;
+        }
+
+        body.dark-mode {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #171717;
+            --text-primary: #e5e5e5;
+            --text-secondary: #a3a3a3;
+            --border-color: #404040;
+            --border-color-focus: #8feeff;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -46,32 +67,31 @@
 
         body {
             font-family: "IBM Plex Mono", monospace;
-            background: rgb(255, 255, 255);
+            background: var(--bg-primary);
+            color: var(--text-primary);
             padding: 20px;
             min-height: 100vh;
-
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             padding: 30px;
         }
 
+        h1, h2 {
+            color: var(--text-primary);
+        }
+
         h1 {
-            color: #1f2937;
             margin-bottom: 30px;
             font-size: 2rem;
         }
 
         h2 {
-            color: #0c0a09;
             margin-bottom: 20px;
             font-size: 1.25rem;
         }
@@ -98,10 +118,11 @@
         }
 
         .input-section {
-            background: #e5fbf8;
+            background: var(--bg-secondary);
             padding: 20px;
             border-radius: 8px;
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .input-group {
@@ -115,32 +136,25 @@
         label {
             display: block;
             font-weight: 500;
-            color: #080807;
+            color: var(--text-primary);
             margin-bottom: 8px;
             font-size: 0.9rem;
         }
 
-        input[type="number"] {
+        input[type="number"], select {
             width: 100%;
             padding: 10px;
-            border: 2px solid #d1d5db;
+            border: 2px solid var(--border-color);
             border-radius: 6px;
             font-size: 0.95rem;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, background-color 0.3s ease, color 0.3s ease;
+            background: var(--bg-card);
+            color: var(--text-primary);
         }
 
-        input[type="number"]:focus {
+        input[type="number"]:focus, select:focus {
             outline: none;
-            border-color: #3b82f6;
-        }
-
-        select {
-            transition: border-color 0.2s;
-        }
-
-        select:focus {
-            outline: none;
-            border-color: #3b82f6;
+            border-color: var(--border-color-focus);
         }
 
         /* Select2 custom styling */
@@ -187,16 +201,17 @@
         }
 
         .summary-card {
-            background: white;
+            background: var(--bg-card);
             padding: 20px;
             border-radius: 8px;
             text-align: center;
-            border: 2px solid #e5e7eb;
+            border: 2px solid var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .summary-label {
             font-size: 0.85rem;
-            color: #080807;
+            color: var(--text-primary);
             margin-bottom: 8px;
         }
 
@@ -222,11 +237,12 @@
         }
 
         .chart-container {
-            background: #e5fbf8;
+            background: var(--bg-secondary);
             padding: 20px;
             border-radius: 8px;
             margin-bottom: 30px;
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         canvas {
@@ -242,21 +258,22 @@
         }
 
         th {
-            background: #f3f4f6;
+            background: var(--bg-secondary);
             padding: 12px;
             text-align: left;
             font-weight: 600;
-            color: #080807;
-            border-bottom: 2px solid #d1d5db;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-color);
         }
 
         td {
             padding: 12px;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
         }
 
         tr:hover {
-            background: #e5fbf8;
+            background: var(--bg-secondary);
         }
 
         .text-right {
@@ -273,8 +290,23 @@
             font-size: 0.9rem;
         }
 
+        body.dark-mode .note {
+            background: #1e293b;
+            border-color: #334155;
+            color: #8feeff;
+        }
+
         .note strong {
             color: #1e3a8a;
+        }
+
+        body.dark-mode .note strong {
+            color: #8feeff;
+        }
+
+        /* Override hardcoded paragraph colors in dark mode with slightly darker text for contrast */
+        body.dark-mode p {
+            color: #a3a3a3 !important;
         }
 
         .section-header {
@@ -287,13 +319,53 @@
         }
 
         .section-header:hover h2 {
-            color: #3b82f6;
+            color: #8feeff;
         }
 
         .collapse-icon {
             font-size: 1.5rem;
-            color: #57534e;
+            color: var(--text-secondary);
             transition: transform 0.3s ease;
+        }
+
+        /* Dark mode Select2 styles */
+        body.dark-mode .select2-container--default .select2-selection--single {
+            background: var(--bg-card);
+            border-color: var(--border-color);
+        }
+
+        body.dark-mode .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #e5e5e5 !important;
+        }
+
+        body.dark-mode .select2-container--default .select2-selection--single .select2-selection__arrow b {
+            border-color: var(--text-secondary) transparent transparent transparent;
+        }
+
+        body.dark-mode .select2-dropdown {
+            background: var(--bg-card);
+            border-color: var(--border-color);
+        }
+
+        body.dark-mode .select2-results__option {
+            background: var(--bg-card);
+            color: #e5e5e5 !important;
+        }
+
+        body.dark-mode .select2-results__option--highlighted[aria-selected] {
+            background: var(--bg-secondary) !important;
+            color: #e5e5e5 !important;
+        }
+
+        body.dark-mode .select2-search--dropdown .select2-search__field {
+            background: var(--bg-card);
+            color: #e5e5e5 !important;
+            border-color: var(--border-color);
+        }
+
+        body.dark-mode .select2-container--default .select2-results__option[aria-selected=true] {
+            background: var(--bg-secondary);
+            color: #e5e5e5 !important;
         }
 
         .collapse-icon.collapsed {
@@ -332,14 +404,20 @@
     </style>
 </head>
 
-<body class="font-mono antialiased bg-white p-5 min-h-screen">
+<body class="font-mono antialiased p-5 min-h-screen">
     <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
             <h1 class="font-instrument font-bold" style="margin: 0; font-size: 29px;">Compensation Calculator</h1>
-            <button onclick="resetCalculator()"
-                style="padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 500;">
-                Reset to Defaults
-            </button>
+            <div style="display: flex; gap: 10px;">
+                <button id="darkModeToggle" onclick="toggleDarkMode()"
+                    style="padding: 8px 16px; background: #6b7280; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 500;">
+                    <span id="darkModeIcon">🌙</span>
+                </button>
+                <button onclick="resetCalculator()"
+                    style="padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 500;">
+                    Reset to Defaults
+                </button>
+            </div>
         </div>
 
         <div class="inputs-grid-four">
@@ -395,7 +473,7 @@
                     </div>
 
                     <div style="border-top: 1px solid #d1d5db; margin: 15px 0; padding-top: 15px;">
-                        <p style="font-size: 0.85rem; color: #57534e; margin-bottom: 10px; font-weight: 500;">Annual
+                        <p style="font-size: 0.85rem; margin-bottom: 10px; font-weight: 500;">Annual
                             Refreshers:</p>
                     </div>
 
@@ -542,7 +620,7 @@
                 <span class="collapse-icon" id="stackedChartIcon">▼</span>
             </div>
             <div class="collapsible-content" id="stackedChartSection">
-                <canvas id="stackedChart"></canvas>
+                <canvas id="stackedChart" onclick="copyChartToClipboard('stackedChart')" style="cursor: pointer;" title="Click to copy chart as image"></canvas>
             </div>
         </div>
 
@@ -603,7 +681,7 @@
                     style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
                     <div>
                         <label for="levelsCompany"
-                            style="display: block; font-weight: 500; color: #080807; margin-bottom: 8px; font-size: 0.9rem;">Company</label>
+                            style="display: block; font-weight: 500; margin-bottom: 8px; font-size: 0.9rem;">Company</label>
                         <select id="levelsCompany"
                             style="width: 100%; padding: 10px; border: 2px solid #d1d5db; border-radius: 6px; font-size: 0.9rem;">
                             <option value="Meta">Meta</option>
@@ -700,7 +778,7 @@
 
                     <div>
                         <label for="levelsTrack"
-                            style="display: block; font-weight: 500; color: #080807; margin-bottom: 8px; font-size: 0.9rem;">Job
+                            style="display: block; font-weight: 500; margin-bottom: 8px; font-size: 0.9rem;">Job
                             Track</label>
                         <select id="levelsTrack"
                             style="width: 100%; padding: 10px; border: 2px solid #d1d5db; border-radius: 6px; font-size: 0.9rem;">
@@ -756,6 +834,98 @@
     </div>
 
     <script>
+        // Copy/Download chart as PNG
+        function copyChartToClipboard(chartId) {
+            const canvas = document.getElementById(chartId);
+            
+            // Convert canvas to blob and try clipboard API first
+            canvas.toBlob(async (blob) => {
+                let success = false;
+                
+                // Try Clipboard API (works in some browsers)
+                if (navigator.clipboard && ClipboardItem) {
+                    try {
+                        await navigator.clipboard.write([
+                            new ClipboardItem({
+                                'image/png': blob
+                            })
+                        ]);
+                        success = true;
+                        showChartCopyFeedback(chartId, 'Chart copied to clipboard!');
+                    } catch (err) {
+                        // Clipboard API failed, fall through to download
+                        console.log('Clipboard API not supported, downloading instead');
+                    }
+                }
+                
+                // Fallback: Download the image
+                if (!success) {
+                    const url = canvas.toDataURL('image/png');
+                    const link = document.createElement('a');
+                    link.download = 'compensation-breakdown.png';
+                    link.href = url;
+                    link.click();
+                    showChartCopyFeedback(chartId, 'Chart downloaded!');
+                }
+            }, 'image/png');
+        }
+
+        function showChartCopyFeedback(chartId, message) {
+            const canvas = document.getElementById(chartId);
+            const container = canvas.parentElement;
+            
+            // Create feedback overlay
+            const feedback = document.createElement('div');
+            feedback.textContent = '✓ ' + message;
+            feedback.style.position = 'absolute';
+            feedback.style.top = '50%';
+            feedback.style.left = '50%';
+            feedback.style.transform = 'translate(-50%, -50%)';
+            feedback.style.background = '#10b981';
+            feedback.style.color = 'white';
+            feedback.style.padding = '12px 24px';
+            feedback.style.borderRadius = '8px';
+            feedback.style.fontSize = '1rem';
+            feedback.style.fontWeight = '600';
+            feedback.style.zIndex = '1000';
+            feedback.style.pointerEvents = 'none';
+            
+            container.style.position = 'relative';
+            container.appendChild(feedback);
+            
+            setTimeout(() => {
+                feedback.remove();
+            }, 2000);
+        }
+
+        // Dark mode functionality
+        function initDarkMode() {
+            // Check for saved preference or use system preference
+            const savedMode = localStorage.getItem('darkMode');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedMode === 'dark' || (savedMode === null && systemPrefersDark)) {
+                document.body.classList.add('dark-mode');
+                updateDarkModeIcon(true);
+            } else {
+                updateDarkModeIcon(false);
+            }
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', isDark ? 'dark' : 'light');
+            updateDarkModeIcon(isDark);
+        }
+
+        function updateDarkModeIcon(isDark) {
+            const icon = document.getElementById('darkModeIcon');
+            icon.textContent = isDark ? '☀️' : '🌙';
+        }
+
+        // Initialize dark mode on page load
+        initDarkMode();
+
         // Copy to clipboard function
         function copyToClipboard(element) {
             const text = element.textContent.trim();
@@ -1114,7 +1284,7 @@
                 {
                     label: 'Bonus',
                     data: data.map(d => d.bonus),
-                    backgroundColor: '#ff87eb',
+                    backgroundColor: '#ffd700',
                     stack: 'pre-tax'
                 },
                 {
@@ -1130,7 +1300,7 @@
                 datasets.push({
                     label: 'After Tax',
                     data: data.map(d => d.afterTaxComp),
-                    backgroundColor: '#332331',
+                    backgroundColor: '#a78bfa',
                     stack: 'after-tax'
                 });
             }
@@ -1186,8 +1356,8 @@
                 lineDatasets.push({
                     label: 'After Tax Compensation',
                     data: data.map(d => d.afterTaxComp),
-                    borderColor: '#332331',
-                    backgroundColor: 'rgba(51, 35, 49, 0.1)',
+                    borderColor: '#a78bfa',
+                    backgroundColor: 'rgba(167, 139, 250, 0.1)',
                     borderWidth: 3,
                     borderDash: [10, 5],
                     tension: 0.4,
