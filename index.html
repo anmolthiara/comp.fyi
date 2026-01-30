@@ -1198,11 +1198,30 @@ Format your response in clear sections with bullet points. Be specific with sala
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error?.message || 'API request failed');
+                    let errorMessage = 'API request failed';
+                    let errorDetails = '';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.error || errorMessage;
+                        errorDetails = JSON.stringify(errorData, null, 2);
+                        console.error('API Error Details:', errorData);
+                    } catch (e) {
+                        // If response isn't JSON, get text
+                        const errorText = await response.text();
+                        errorMessage = errorText || `Server error: ${response.status}`;
+                        errorDetails = errorText;
+                        console.error('API Error Text:', errorText);
+                    }
+                    throw new Error(errorMessage + '\n\nDetails: ' + errorDetails);
                 }
 
                 const data = await response.json();
+                
+                // Check if we have the expected response structure
+                if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+                    throw new Error('Invalid response from API');
+                }
+                
                 const analysisText = data.candidates[0].content.parts[0].text;
 
                 // Display results
@@ -1213,8 +1232,17 @@ Format your response in clear sections with bullet points. Be specific with sala
                 document.getElementById('aiAnalysisResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
             } catch (error) {
-                alert(`Error analyzing compensation: ${error.message}\n\nPlease check your API key and try again.`);
-                console.error('Gemini API Error:', error);
+                let errorMsg = error.message;
+                
+                // Provide more helpful error messages
+                if (errorMsg.includes('valid JSON')) {
+                    errorMsg = 'Server configuration error. Please check that the /api folder is properly deployed to Vercel.';
+                } else if (errorMsg.includes('Failed to fetch')) {
+                    errorMsg = 'Network error. Please check your connection and try again.';
+                }
+                
+                alert(`Error analyzing compensation: ${errorMsg}`);
+                console.error('Analysis Error:', error);
             } finally {
                 // Hide loading
                 document.getElementById('aiLoadingSpinner').style.display = 'none';
