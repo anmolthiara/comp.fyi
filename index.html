@@ -386,6 +386,41 @@
             }
         }
 
+        /* Onboarding Styles */
+        .onboarding-step {
+            min-height: 60vh;
+            padding: 40px 20px;
+        }
+
+        .comp-option {
+            cursor: pointer;
+            display: block;
+        }
+
+        .comp-option input[type="radio"] {
+            display: none;
+        }
+
+        .comp-option-content {
+            padding: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .comp-option:hover .comp-option-content {
+            border-color: #8feeff;
+            background: var(--bg-card);
+        }
+
+        .comp-option input[type="radio"]:checked + .comp-option-content {
+            border-color: #8feeff;
+            background: var(--bg-card);
+            box-shadow: 0 0 0 3px rgba(143, 238, 255, 0.1);
+        }
+
         @media (max-width: 768px) {
 
             .inputs-grid,
@@ -417,6 +452,78 @@
             table td {
                 padding: 8px;
             }
+            
+            /* Onboarding step titles */
+            .onboarding-step h2 {
+                font-size: 1.3rem !important;
+            }
+            
+            .onboarding-step p {
+                font-size: 0.9rem !important;
+            }
+            
+            .onboarding-step {
+                padding: 20px 10px !important;
+            }
+            
+            /* Compensation option cards */
+            .comp-option {
+                min-width: 100% !important;
+            }
+            
+            .comp-option-content {
+                padding: 15px !important;
+            }
+            
+            .comp-option-content > div:first-child {
+                font-size: 0.95rem !important;
+            }
+            
+            .comp-option-content > div:last-child {
+                font-size: 0.8rem !important;
+            }
+            
+            /* Header buttons */
+            #startOverBtn,
+            #darkModeToggle {
+                padding: 6px 12px !important;
+                font-size: 0.8rem !important;
+            }
+            
+            /* Onboarding buttons */
+            .onboarding-step button {
+                padding: 12px !important;
+                font-size: 0.95rem !important;
+            }
+            
+            /* Profile banner */
+            #profileBanner {
+                padding: 15px !important;
+            }
+            
+            #profileBanner h3 {
+                font-size: 1rem !important;
+            }
+            
+            #profileBanner p {
+                font-size: 0.8rem !important;
+            }
+            
+            #profileBadge {
+                padding: 6px 12px !important;
+                font-size: 0.75rem !important;
+            }
+            
+            #profileBanner button {
+                padding: 6px 12px !important;
+                font-size: 0.75rem !important;
+            }
+            
+            /* AI Analysis button */
+            #analyzeBtn {
+                padding: 12px !important;
+                font-size: 0.9rem !important;
+            }
         }
     </style>
 </head>
@@ -430,6 +537,9 @@
                     Thiara</p>
             </div>
             <div style="display: flex; gap: 10px;">
+                <button id="startOverBtn" onclick="resetOnboarding()" style="display: none; padding: 8px 16px; background: var(--bg-secondary); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 500;">
+                    ⚙️ Start Over
+                </button>
                 <button id="darkModeToggle" onclick="toggleDarkMode()"
                     style="padding: 8px 16px; background: #333231; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 500;">
                     <span id="darkModeIcon">🌙</span>
@@ -441,18 +551,141 @@
             </div>
         </div>
 
-        <!-- Mode Toggle -->
-        <div style="display: flex; justify-content: center; margin-bottom: 30px;">
-            <div
-                style="background: var(--bg-secondary); border-radius: 8px; padding: 4px; display: inline-flex; gap: 4px;">
-                <button id="rsuModeBtn" onclick="switchMode('rsu')"
-                    style="padding: 10px 24px; background: #8feeff; color: #0a0a0a; border: none; border-radius: 6px; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: all 0.2s;">
-                    RSU Calculator
-                </button>
-                <button id="isoModeBtn" onclick="switchMode('iso')"
-                    style="padding: 10px 24px; background: transparent; color: var(--text-primary); border: none; border-radius: 6px; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: all 0.2s;">
-                    ISO Calculator
-                </button>
+        <!-- Onboarding Flow -->
+        <div id="onboardingFlow" style="display: block;">
+            <!-- Step 1: Personal Info -->
+            <div id="onboardingStep1" class="onboarding-step">
+                <div style="max-width: 800px; margin: 0 auto;">
+                    <h2 style="font-size: 1.8rem; margin-bottom: 10px; text-align: center;">Welcome to pay.fyi 👋</h2>
+                    <p style="text-align: center; color: var(--text-secondary); margin-bottom: 40px; font-size: 1.1rem;">
+                        Let's get started by learning about your role
+                    </p>
+
+                    <div class="inputs-grid" style="margin-bottom: 30px;">
+                        <div class="input-group">
+                            <label for="onboardRole">Role/Title *</label>
+                            <div class="autocomplete-wrapper">
+                                <input type="text" id="onboardRole" placeholder="e.g., Senior Software Engineer" autocomplete="off" required>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="onboardLocation">Location *</label>
+                            <div class="autocomplete-wrapper">
+                                <input type="text" id="onboardLocation" placeholder="e.g., San Francisco, CA" autocomplete="off" required>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="onboardYearsExp">Years of Experience *</label>
+                            <input type="number" id="onboardYearsExp" min="0" max="50" placeholder="e.g., 5" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="onboardIndustry">Industry *</label>
+                            <div class="autocomplete-wrapper">
+                                <input type="text" id="onboardIndustry" placeholder="e.g., Technology" autocomplete="off" required>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="onboardCompany">Company (Optional)</label>
+                            <div class="autocomplete-wrapper">
+                                <input type="text" id="onboardCompany" placeholder="e.g., Google" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="goToStep2()" 
+                        style="width: 100%; padding: 15px; background: #8feeff; color: #0a0a0a; border: none; border-radius: 6px; cursor: pointer; font-size: 1.1rem; font-weight: 600; transition: all 0.3s ease; margin-top: 20px;">
+                        Continue →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Compensation Structure -->
+            <div id="onboardingStep2" class="onboarding-step" style="display: none;">
+                <div style="max-width: 800px; margin: 0 auto;">
+                    <h2 style="font-size: 1.8rem; margin-bottom: 10px; text-align: center;">Your Compensation Structure 💰</h2>
+                    <p style="text-align: center; color: var(--text-secondary); margin-bottom: 40px; font-size: 1.1rem;">
+                        Tell us about your compensation package
+                    </p>
+
+                    <!-- Cash Structure -->
+                    <div style="margin-bottom: 40px;">
+                        <h3 style="font-size: 1.3rem; margin-bottom: 20px;">1. Cash Compensation</h3>
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                            <label class="comp-option" style="flex: 1; min-width: 250px;">
+                                <input type="radio" name="cashType" value="straight" checked>
+                                <div class="comp-option-content">
+                                    <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 5px;">💵 Straight Salary</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Fixed annual salary only</div>
+                                </div>
+                            </label>
+                            <label class="comp-option" style="flex: 1; min-width: 250px;">
+                                <input type="radio" name="cashType" value="commission">
+                                <div class="comp-option-content">
+                                    <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 5px;">📈 Salary + Commission (OTE)</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Base + variable performance pay</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Equity Structure -->
+                    <div style="margin-bottom: 40px;">
+                        <h3 style="font-size: 1.3rem; margin-bottom: 20px;">2. Equity Compensation</h3>
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                            <label class="comp-option" style="flex: 1; min-width: 200px;">
+                                <input type="radio" name="equityType" value="none" checked>
+                                <div class="comp-option-content">
+                                    <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 5px;">❌ No Equity</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Cash only</div>
+                                </div>
+                            </label>
+                            <label class="comp-option" style="flex: 1; min-width: 200px;">
+                                <input type="radio" name="equityType" value="rsu">
+                                <div class="comp-option-content">
+                                    <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 5px;">📊 RSUs</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Restricted Stock Units</div>
+                                </div>
+                            </label>
+                            <label class="comp-option" style="flex: 1; min-width: 200px;">
+                                <input type="radio" name="equityType" value="iso">
+                                <div class="comp-option-content">
+                                    <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 5px;">🎯 ISOs</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Stock Options</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px;">
+                        <button onclick="goToStep1()" 
+                            style="flex: 1; padding: 15px; background: var(--bg-secondary); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; cursor: pointer; font-size: 1.1rem; font-weight: 600;">
+                            ← Back
+                        </button>
+                        <button onclick="completeOnboarding()" 
+                            style="flex: 2; padding: 15px; background: #8feeff; color: #0a0a0a; border: none; border-radius: 6px; cursor: pointer; font-size: 1.1rem; font-weight: 600; transition: all 0.3s ease;">
+                            Get Started 🚀
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculator Section (Hidden Initially) -->
+        <div id="calculatorSection" style="display: none;">
+        
+        <!-- User Profile Banner -->
+        <div id="profileBanner" style="background: var(--bg-secondary); border: 2px solid var(--border-color); border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                <div>
+                    <h3 style="margin: 0 0 8px 0; font-size: 1.2rem;" id="profileRole">Loading...</h3>
+                    <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;" id="profileDetails">Loading...</p>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span id="profileBadge" style="padding: 8px 16px; background: #8feeff; color: #0a0a0a; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">💵 Cash Only</span>
+                    <button onclick="editCompStructure()" style="padding: 8px 16px; background: var(--bg-card); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease;">
+                        ✏️ Edit
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -469,27 +702,98 @@
                         <p style="font-size: 0.85rem; color: #57534e; margin-bottom: 15px;">Auto-applies 3% annual raise
                             each year</p>
 
-                        <div class="input-group">
-                            <label for="baseSalary">Starting Base Salary ($)</label>
-                            <input type="number" id="baseSalary" min="0" step="1000" placeholder="0">
+                        <!-- Straight Salary Mode (default) -->
+                        <div id="straightSalaryMode">
+                            <div class="input-group">
+                                <label for="baseSalary">Starting Base Salary ($)</label>
+                                <input type="number" id="baseSalary" min="0" step="1000" placeholder="0">
+                            </div>
+
+                            <div class="input-group">
+                                <label style="display: flex; align-items: center; cursor: pointer;">
+                                    <input type="checkbox" id="enableAnnualRaise" checked
+                                        style="width: auto; margin-right: 10px; cursor: pointer;">
+                                    <span>Apply 3% annual raise</span>
+                                </label>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="bonusPercent">Annual Bonus (%)</label>
+                                <input type="number" id="bonusPercent" min="0" max="100" step="0.5" placeholder="0">
+                                <p style="font-size: 0.75rem; color: #57534e; margin-top: 5px;">Applied to base salary each
+                                    year
+                                </p>
+                            </div>
                         </div>
 
-                        <div class="input-group">
-                            <label style="display: flex; align-items: center; cursor: pointer;">
-                                <input type="checkbox" id="enableAnnualRaise" checked
-                                    style="width: auto; margin-right: 10px; cursor: pointer;">
-                                <span>Apply 3% annual raise</span>
-                            </label>
+                        <!-- Commission/OTE Mode -->
+                        <div id="commissionMode" style="display: none;">
+                            <!-- Toggle between OTE and Base+Variable -->
+                            <div class="input-group" style="margin-bottom: 20px;">
+                                <label style="display: flex; align-items: center; cursor: pointer;">
+                                    <input type="checkbox" id="oteInputMode" 
+                                        style="width: auto; margin-right: 10px; cursor: pointer;">
+                                    <span>Enter OTE (On-Target Earnings) instead of Base + Variable</span>
+                                </label>
+                            </div>
+
+                            <!-- Base + Variable Mode (default) -->
+                            <div id="baseVariableInputs">
+                                <div class="input-group">
+                                    <label for="commissionBase">Base Salary ($)</label>
+                                    <input type="number" id="commissionBase" min="0" step="1000" placeholder="0">
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="targetVariable">Target Variable/Commission ($)</label>
+                                    <input type="number" id="targetVariable" min="0" step="1000" placeholder="0">
+                                    <p style="font-size: 0.75rem; color: #57534e; margin-top: 5px;">
+                                        Target commission at 100% attainment
+                                    </p>
+                                </div>
+
+                                <div style="padding: 12px; background: var(--bg-secondary); border-radius: 6px; margin-top: 10px;">
+                                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">
+                                        <strong>OTE (On-Target Earnings):</strong> <span id="calculatedOTE">$0</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- OTE Input Mode -->
+                            <div id="oteInputs" style="display: none;">
+                                <div class="input-group">
+                                    <label for="oteAmount">OTE (On-Target Earnings) ($)</label>
+                                    <input type="number" id="oteAmount" min="0" step="1000" placeholder="0">
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="baseSplit">Base Salary % of OTE</label>
+                                    <input type="number" id="baseSplit" min="0" max="100" step="1" placeholder="70" value="70">
+                                    <p style="font-size: 0.75rem; color: #57534e; margin-top: 5px;">
+                                        Common splits: 70/30, 75/25, 80/20, 60/40
+                                    </p>
+                                </div>
+
+                                <div style="padding: 12px; background: var(--bg-secondary); border-radius: 6px; margin-top: 10px;">
+                                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 5px 0;">
+                                        <strong>Base Salary:</strong> <span id="calculatedBase">$0</span>
+                                    </p>
+                                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">
+                                        <strong>Target Variable:</strong> <span id="calculatedVariable">$0</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="input-group" style="margin-top: 15px;">
+                                <label style="display: flex; align-items: center; cursor: pointer;">
+                                    <input type="checkbox" id="enableAnnualRaiseComm" checked
+                                        style="width: auto; margin-right: 10px; cursor: pointer;">
+                                    <span>Apply 3% annual raise to base salary</span>
+                                </label>
+                            </div>
                         </div>
 
-                        <div class="input-group">
-                            <label for="bonusPercent">Annual Bonus (%)</label>
-                            <input type="number" id="bonusPercent" min="0" max="100" step="0.5" placeholder="0">
-                            <p style="font-size: 0.75rem; color: #57534e; margin-top: 5px;">Applied to base salary each
-                                year
-                            </p>
-                        </div>
-
+                        <!-- Sign-On Bonus (both modes) -->
                         <div class="input-group">
                             <label for="signOnBonus">Sign-On Bonus ($)</label>
                             <input type="number" id="signOnBonus" min="0" step="1000" placeholder="0">
@@ -500,7 +804,7 @@
                 </div>
 
                 <!-- RSU Grants -->
-                <div class="input-section">
+                <div class="input-section" id="rsuGrantsInputSection">
                     <div class="section-header" onclick="toggleSection('rsuGrantsSection')">
                         <h2>RSU Grants</h2>
                         <span class="collapse-icon" id="rsuGrantsIcon">▼</span>
@@ -558,7 +862,7 @@
                 </div>
 
                 <!-- Stock Prices -->
-                <div class="input-section">
+                <div class="input-section" id="stockPriceInputSection">
                     <div class="section-header" onclick="toggleSection('stockPriceSection')">
                         <h2>Stock Price per Year</h2>
                         <span class="collapse-icon" id="stockPriceIcon">▼</span>
@@ -704,7 +1008,7 @@
                                 <tr>
                                     <th>Year</th>
                                     <th class="text-right">Base Salary</th>
-                                    <th class="text-right">Bonus</th>
+                                    <th class="text-right">Target Variable</th>
                                     <th class="text-right">Sign-On</th>
                                     <th class="text-right">Initial RSUs</th>
                                     <th class="text-right">Refresher RSUs</th>
@@ -728,39 +1032,29 @@
                     Get AI-powered insights comparing your compensation package to industry standards.
                 </p>
 
-                <div class="inputs-grid" style="margin-bottom: 20px;">
-                    <div class="input-group">
-                        <label for="aiRole">Role/Title</label>
-                        <div class="autocomplete-wrapper">
-                            <input type="text" id="aiRole" placeholder="e.g., Senior Software Engineer" autocomplete="off">
+                <!-- Show profile summary instead of input fields -->
+                <div style="padding: 20px; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 20px; border: 2px solid var(--border-color);">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 0.5px;">Role</p>
+                            <p style="font-size: 0.95rem; font-weight: 600; margin: 0;" id="aiSummaryRole">-</p>
                         </div>
-                    </div>
-                    <div class="input-group">
-                        <label for="aiLocation">Location</label>
-                        <div class="autocomplete-wrapper">
-                            <input type="text" id="aiLocation" placeholder="e.g., San Francisco, CA" autocomplete="off">
+                        <div>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 0.5px;">Location</p>
+                            <p style="font-size: 0.95rem; font-weight: 600; margin: 0;" id="aiSummaryLocation">-</p>
                         </div>
-                    </div>
-                    <div class="input-group">
-                        <label for="aiYearsExp">Years of Experience</label>
-                        <input type="number" id="aiYearsExp" min="0" max="50" placeholder="e.g., 5">
-                    </div>
-                    <div class="input-group">
-                        <label for="aiIndustry">Industry</label>
-                        <div class="autocomplete-wrapper">
-                            <input type="text" id="aiIndustry" placeholder="e.g., Technology" autocomplete="off">
+                        <div>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 0.5px;">Experience</p>
+                            <p style="font-size: 0.95rem; font-weight: 600; margin: 0;" id="aiSummaryYears">-</p>
                         </div>
-                    </div>
-                    <div class="input-group">
-                        <label for="aiCompanySize">Company Size</label>
-                        <select id="aiCompanySize">
-                            <option value="">Select size...</option>
-                            <option value="Startup (<50)">Startup (<50)</option>
-                            <option value="Small (50-200)">Small (50-200)</option>
-                            <option value="Medium (200-1000)">Medium (200-1000)</option>
-                            <option value="Large (1000-10000)">Large (1000-10000)</option>
-                            <option value="Enterprise (10000+)">Enterprise (10000+)</option>
-                        </select>
+                        <div>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 0.5px;">Industry</p>
+                            <p style="font-size: 0.95rem; font-weight: 600; margin: 0;" id="aiSummaryIndustry">-</p>
+                        </div>
+                        <div>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 0.5px;">Company</p>
+                            <p style="font-size: 0.95rem; font-weight: 600; margin: 0;" id="aiSummaryCompany">-</p>
+                        </div>
                     </div>
                 </div>
 
@@ -1066,7 +1360,7 @@
                             <tr>
                                 <th>Year</th>
                                 <th>Base Salary</th>
-                                <th>Bonus</th>
+                                <th>Target Variable</th>
                                 <th>Sign-On</th>
                                 <th>Total Cash</th>
                                 <th>ISO Upside (Annual)</th>
@@ -1096,24 +1390,469 @@
         </div>
         <!-- End ISO Calculator -->
 
+        </div>
+        <!-- End Calculator Section -->
+
     </div>
 
     <script>
+        // Onboarding state management
+        const onboardingData = {
+            role: '',
+            location: '',
+            yearsExp: '',
+            industry: '',
+            company: '',
+            cashType: 'straight',
+            equityType: 'none'
+        };
+
+        // Navigation functions
+        function goToStep2() {
+            const role = document.getElementById('onboardRole').value.trim();
+            const location = document.getElementById('onboardLocation').value.trim();
+            const yearsExp = document.getElementById('onboardYearsExp').value;
+            const industry = document.getElementById('onboardIndustry').value.trim();
+            
+            if (!role || !location || !yearsExp || !industry) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            onboardingData.role = role;
+            onboardingData.location = location;
+            onboardingData.yearsExp = yearsExp;
+            onboardingData.industry = industry;
+            onboardingData.company = document.getElementById('onboardCompany').value.trim();
+            
+            document.getElementById('onboardingStep1').style.display = 'none';
+            document.getElementById('onboardingStep2').style.display = 'block';
+        }
+
+        function goToStep1() {
+            document.getElementById('onboardingStep2').style.display = 'none';
+            document.getElementById('onboardingStep1').style.display = 'block';
+        }
+        
+        function editCompStructure() {
+            console.log('Editing compensation structure');
+            
+            // Pre-fill Step 2 with current selections
+            const currentCashType = onboardingData.cashType || 'straight';
+            const currentEquityType = onboardingData.equityType || 'none';
+            
+            // Set radio buttons to current values
+            const cashRadio = document.querySelector(`input[name="cashType"][value="${currentCashType}"]`);
+            const equityRadio = document.querySelector(`input[name="equityType"][value="${currentEquityType}"]`);
+            
+            if (cashRadio) cashRadio.checked = true;
+            if (equityRadio) equityRadio.checked = true;
+            
+            // Hide calculator, show onboarding step 2
+            document.getElementById('calculatorSection').style.display = 'none';
+            document.getElementById('onboardingFlow').style.display = 'block';
+            document.getElementById('onboardingStep1').style.display = 'none';
+            document.getElementById('onboardingStep2').style.display = 'block';
+        }
+
+        function completeOnboarding() {
+            console.log('=== completeOnboarding START ===');
+            
+            const cashTypeEl = document.querySelector('input[name="cashType"]:checked');
+            const equityTypeEl = document.querySelector('input[name="equityType"]:checked');
+            
+            console.log('Cash type element:', cashTypeEl);
+            console.log('Equity type element:', equityTypeEl);
+            
+            if (!cashTypeEl || !equityTypeEl) {
+                console.error('Missing radio button selection!');
+                alert('Please select both cash and equity options');
+                return;
+            }
+            
+            const cashType = cashTypeEl.value;
+            const equityType = equityTypeEl.value;
+            
+            console.log('Cash type:', cashType);
+            console.log('Equity type:', equityType);
+            
+            onboardingData.cashType = cashType;
+            onboardingData.equityType = equityType;
+            
+            console.log('Saving onboarding data:', onboardingData);
+            localStorage.setItem('onboardingCompleted', 'true');
+            localStorage.setItem('onboardingData', JSON.stringify(onboardingData));
+            
+            // Update profile banner
+            console.log('Updating profile banner...');
+            try {
+                updateProfileBanner();
+            } catch (e) {
+                console.error('Error updating profile banner:', e);
+            }
+            
+            console.log('Calling showCalculator with:', equityType);
+            try {
+                showCalculator(equityType);
+            } catch (e) {
+                console.error('Error in showCalculator:', e);
+            }
+            
+            console.log('Hiding onboarding, showing calculator...');
+            const onboardingFlow = document.getElementById('onboardingFlow');
+            const calculatorSection = document.getElementById('calculatorSection');
+            const startOverBtn = document.getElementById('startOverBtn');
+            
+            console.log('Onboarding flow element:', onboardingFlow);
+            console.log('Calculator section element:', calculatorSection);
+            console.log('Start over button:', startOverBtn);
+            
+            if (onboardingFlow) onboardingFlow.style.display = 'none';
+            if (calculatorSection) {
+                calculatorSection.style.display = 'block';
+                console.log('Calculator section display set to block!');
+            } else {
+                console.error('Calculator section not found!');
+            }
+            if (startOverBtn) startOverBtn.style.display = 'block';
+            
+            // Pre-fill AI analyzer fields AFTER calculator is visible
+            console.log('Pre-filling AI fields...');
+            setTimeout(() => {
+                try {
+                    const aiRole = document.getElementById('aiRole');
+                    const aiLocation = document.getElementById('aiLocation');
+                    const aiYearsExp = document.getElementById('aiYearsExp');
+                    const aiIndustry = document.getElementById('aiIndustry');
+                    
+                    if (aiRole) aiRole.value = onboardingData.role;
+                    if (aiLocation) aiLocation.value = onboardingData.location;
+                    if (aiYearsExp) aiYearsExp.value = onboardingData.yearsExp;
+                    if (aiIndustry) aiIndustry.value = onboardingData.industry;
+                    
+                    if (aiRole && aiLocation && aiYearsExp && aiIndustry) {
+                        saveAIInputs();
+                    } else {
+                        console.warn('Some AI fields not found, skipping save');
+                    }
+                } catch (e) {
+                    console.error('Error pre-filling AI fields:', e);
+                }
+            }, 100);
+            
+            console.log('=== completeOnboarding END ===');
+        }
+        
+        function updateProfileBanner() {
+            try {
+                const data = onboardingData;
+                
+                // Update role and details
+                const roleEl = document.getElementById('profileRole');
+                const detailsEl = document.getElementById('profileDetails');
+                const badgeEl = document.getElementById('profileBadge');
+                
+                if (roleEl) roleEl.textContent = data.role;
+                if (detailsEl) {
+                    detailsEl.textContent = 
+                        `${data.location} • ${data.yearsExp} years • ${data.industry}${data.company ? ` • ${data.company}` : ''}`;
+                }
+                
+                // Update badge based on comp structure
+                if (badgeEl) {
+                    let badgeText = '';
+                    
+                    if (data.equityType === 'none') {
+                        badgeText = data.cashType === 'commission' ? '📈 Salary + Commission' : '💵 Cash Only';
+                    } else if (data.equityType === 'rsu') {
+                        badgeText = '📊 Cash + RSUs';
+                    } else if (data.equityType === 'iso') {
+                        badgeText = '🎯 Cash + ISOs';
+                    }
+                    
+                    badgeEl.textContent = badgeText;
+                }
+                
+                // Update AI summary section
+                updateAISummary();
+                
+                console.log('Profile banner updated successfully');
+            } catch (error) {
+                console.error('Error updating profile banner:', error);
+            }
+        }
+        
+        function updateAISummary() {
+            try {
+                const data = onboardingData;
+                
+                // Update AI analysis summary fields
+                const summaryRole = document.getElementById('aiSummaryRole');
+                const summaryLocation = document.getElementById('aiSummaryLocation');
+                const summaryYears = document.getElementById('aiSummaryYears');
+                const summaryIndustry = document.getElementById('aiSummaryIndustry');
+                const summaryCompany = document.getElementById('aiSummaryCompany');
+                
+                if (summaryRole) summaryRole.textContent = data.role || '-';
+                if (summaryLocation) summaryLocation.textContent = data.location || '-';
+                if (summaryYears) summaryYears.textContent = data.yearsExp ? `${data.yearsExp} years` : '-';
+                if (summaryIndustry) summaryIndustry.textContent = data.industry || '-';
+                if (summaryCompany) summaryCompany.textContent = data.company || 'Not specified';
+                
+                console.log('AI summary updated successfully');
+            } catch (error) {
+                console.error('Error updating AI summary:', error);
+            }
+        }
+
+        function showCalculator(equityType) {
+            console.log('=== showCalculator START ===');
+            console.log('Equity type:', equityType);
+            
+            // Get calculator elements
+            const rsuCalc = document.getElementById('rsuCalculator');
+            const isoCalc = document.getElementById('isoCalculator');
+            const rsuGrantsInput = document.getElementById('rsuGrantsInputSection');
+            const stockPriceInput = document.getElementById('stockPriceInputSection');
+            
+            console.log('RSU Calculator element:', rsuCalc);
+            console.log('ISO Calculator element:', isoCalc);
+            console.log('RSU Grants section:', rsuGrantsInput);
+            console.log('Stock Price section:', stockPriceInput);
+            
+            // Hide both calculators first
+            if (rsuCalc) rsuCalc.style.display = 'none';
+            if (isoCalc) isoCalc.style.display = 'none';
+            
+            // Show/hide commission vs straight salary modes
+            const isCommission = onboardingData.cashType === 'commission';
+            const straightMode = document.getElementById('straightSalaryMode');
+            const commissionMode = document.getElementById('commissionMode');
+            
+            if (straightMode) straightMode.style.display = isCommission ? 'none' : 'block';
+            if (commissionMode) commissionMode.style.display = isCommission ? 'block' : 'none';
+            
+            if (equityType === 'rsu') {
+                console.log('>>> Showing RSU calculator with equity');
+                if (rsuCalc) rsuCalc.style.display = 'block';
+                currentMode = 'rsu';
+                
+                // Show all equity sections for RSU
+                if (rsuGrantsInput) {
+                    console.log('Showing RSU grants section');
+                    rsuGrantsInput.style.display = 'block';
+                }
+                if (stockPriceInput) {
+                    console.log('Showing stock price section');
+                    stockPriceInput.style.display = 'block';
+                }
+                
+                updateDisplay();
+            } else if (equityType === 'iso') {
+                console.log('>>> Showing ISO calculator');
+                if (isoCalc) isoCalc.style.display = 'block';
+                currentMode = 'iso';
+                updateISODisplay();
+            } else {
+                console.log('>>> Showing cash-only calculator (RSU calc without equity)');
+                // No equity - show RSU calculator with equity sections hidden
+                if (rsuCalc) {
+                    rsuCalc.style.display = 'block';
+                    console.log('RSU Calculator display set to block');
+                }
+                currentMode = 'cash-only';
+                
+                // Hide equity-related sections
+                if (rsuGrantsInput) {
+                    console.log('Hiding RSU grants section');
+                    rsuGrantsInput.style.display = 'none';
+                }
+                if (stockPriceInput) {
+                    console.log('Hiding stock price section');
+                    stockPriceInput.style.display = 'none';
+                }
+                
+                // Set equity values to 0
+                const fields = ['initialGrant', 'stockYear1', 'stockYear2', 'stockYear3', 'stockYear4'];
+                fields.forEach(field => {
+                    const el = document.getElementById(field);
+                    if (el) el.value = 0;
+                });
+                
+                const refreshers = document.getElementById('enableRefreshers');
+                if (refreshers) refreshers.checked = false;
+                
+                console.log('Calling updateDisplay...');
+                updateDisplay();
+            }
+            
+            console.log('=== showCalculator END ===');
+        }
+        
+        // OTE/Commission calculations
+        function setupOTEListeners() {
+            const oteToggle = document.getElementById('oteInputMode');
+            const baseVariableInputs = document.getElementById('baseVariableInputs');
+            const oteInputs = document.getElementById('oteInputs');
+            
+            if (oteToggle) {
+                oteToggle.addEventListener('change', function() {
+                    if (this.checked) {
+                        baseVariableInputs.style.display = 'none';
+                        oteInputs.style.display = 'block';
+                        calculateFromOTE();
+                    } else {
+                        baseVariableInputs.style.display = 'block';
+                        oteInputs.style.display = 'none';
+                        calculateOTE();
+                    }
+                });
+            }
+            
+            // Base + Variable mode listeners
+            const commissionBase = document.getElementById('commissionBase');
+            const targetVariable = document.getElementById('targetVariable');
+            
+            if (commissionBase) {
+                commissionBase.addEventListener('input', function() {
+                    calculateOTE();
+                    updateDisplay();
+                    saveInputs();
+                });
+            }
+            if (targetVariable) {
+                targetVariable.addEventListener('input', function() {
+                    calculateOTE();
+                    updateDisplay();
+                    saveInputs();
+                });
+            }
+            
+            // OTE mode listeners
+            const oteAmount = document.getElementById('oteAmount');
+            const baseSplit = document.getElementById('baseSplit');
+            
+            if (oteAmount) {
+                oteAmount.addEventListener('input', function() {
+                    calculateFromOTE();
+                    updateDisplay();
+                    saveInputs();
+                });
+            }
+            if (baseSplit) {
+                baseSplit.addEventListener('input', function() {
+                    calculateFromOTE();
+                    updateDisplay();
+                    saveInputs();
+                });
+            }
+            
+            // Annual raise checkbox for commission mode
+            const enableAnnualRaiseComm = document.getElementById('enableAnnualRaiseComm');
+            if (enableAnnualRaiseComm) {
+                enableAnnualRaiseComm.addEventListener('change', function() {
+                    updateDisplay();
+                    saveInputs();
+                });
+            }
+        }
+        
+        function calculateOTE() {
+            const base = parseFloat(document.getElementById('commissionBase').value) || 0;
+            const variable = parseFloat(document.getElementById('targetVariable').value) || 0;
+            const ote = base + variable;
+            
+            document.getElementById('calculatedOTE').textContent = '$' + ote.toLocaleString();
+            
+            // Sync to baseSalary and bonusPercent for calculations
+            document.getElementById('baseSalary').value = base;
+            
+            // Calculate bonus percent: (variable / base) * 100
+            if (base > 0) {
+                const bonusPercent = (variable / base) * 100;
+                document.getElementById('bonusPercent').value = bonusPercent.toFixed(1);
+            } else {
+                document.getElementById('bonusPercent').value = 0;
+            }
+        }
+        
+        function calculateFromOTE() {
+            const ote = parseFloat(document.getElementById('oteAmount').value) || 0;
+            const baseSplit = parseFloat(document.getElementById('baseSplit').value) || 70;
+            
+            const base = Math.round(ote * (baseSplit / 100));
+            const variable = ote - base;
+            
+            document.getElementById('calculatedBase').textContent = '$' + base.toLocaleString();
+            document.getElementById('calculatedVariable').textContent = '$' + variable.toLocaleString();
+            
+            // Sync to baseSalary and bonusPercent for calculations
+            document.getElementById('baseSalary').value = base;
+            
+            // Calculate bonus percent: (variable / base) * 100
+            if (base > 0) {
+                const bonusPercent = (variable / base) * 100;
+                document.getElementById('bonusPercent').value = bonusPercent.toFixed(1);
+            } else {
+                document.getElementById('bonusPercent').value = 0;
+            }
+        }
+
+        function checkOnboardingStatus() {
+            const completed = localStorage.getItem('onboardingCompleted');
+            const data = localStorage.getItem('onboardingData');
+            
+            if (completed === 'true' && data) {
+                const savedData = JSON.parse(data);
+                Object.assign(onboardingData, savedData);
+                
+                document.getElementById('onboardingFlow').style.display = 'none';
+                document.getElementById('calculatorSection').style.display = 'block';
+                document.getElementById('startOverBtn').style.display = 'block';
+                
+                // Update profile banner
+                updateProfileBanner();
+                
+                showCalculator(savedData.equityType);
+                
+                // Pre-fill AI fields
+                if (document.getElementById('aiRole')) {
+                    document.getElementById('aiRole').value = savedData.role;
+                    document.getElementById('aiLocation').value = savedData.location;
+                    document.getElementById('aiYearsExp').value = savedData.yearsExp;
+                    document.getElementById('aiIndustry').value = savedData.industry;
+                }
+            } else {
+                document.getElementById('onboardingFlow').style.display = 'block';
+                document.getElementById('calculatorSection').style.display = 'none';
+                document.getElementById('startOverBtn').style.display = 'none';
+            }
+        }
+
+        function resetOnboarding() {
+            if (confirm('This will reset all your data and start fresh. Continue?')) {
+                localStorage.removeItem('onboardingCompleted');
+                localStorage.removeItem('onboardingData');
+                location.reload();
+            }
+        }
+
         // AI Compensation Analysis with Google Gemini
         async function analyzeCompensation() {
-            const role = document.getElementById('aiRole').value.trim();
-            const location = document.getElementById('aiLocation').value.trim();
-            const yearsExp = document.getElementById('aiYearsExp').value;
-            const industry = document.getElementById('aiIndustry').value.trim();
-            const companySize = document.getElementById('aiCompanySize').value;
+            // Use onboarding data instead of input fields
+            const role = onboardingData.role;
+            const location = onboardingData.location;
+            const yearsExp = onboardingData.yearsExp;
+            const industry = onboardingData.industry;
+            const company = onboardingData.company || 'Not specified';
 
-            // Validation
-            if (!role || !location || !yearsExp || !industry || !companySize) {
-                alert('Please fill in all fields (Role, Location, Years of Experience, Industry, Company Size)');
+            // Validation - these should always be present from onboarding
+            if (!role || !location || !yearsExp || !industry) {
+                alert('Missing profile information. Please start over and complete the onboarding flow.');
                 return;
             }
 
-            // Get current compensation data from RSU calculator
+            // Get current compensation data from calculator
             const baseSalary = parseInt(document.getElementById('baseSalary').value) || 0;
             const bonusPercent = parseFloat(document.getElementById('bonusPercent').value) || 0;
             const signOnBonus = parseInt(document.getElementById('signOnBonus').value) || 0;
@@ -1145,7 +1884,7 @@ Role: ${role}
 Location: ${location}
 Years of Experience: ${yearsExp}
 Industry: ${industry}
-Company Size: ${companySize}
+Company: ${company}
 
 Current Compensation Package:
 - Base Salary: $${baseSalary.toLocaleString()}
@@ -1247,39 +1986,17 @@ Format your response in clear sections with bullet points. Be specific with sala
 
         // AI Analyzer - Save and Load inputs
         function saveAIInputs() {
-            const aiInputs = {
-                role: document.getElementById('aiRole').value,
-                location: document.getElementById('aiLocation').value,
-                yearsExp: document.getElementById('aiYearsExp').value,
-                industry: document.getElementById('aiIndustry').value,
-                companySize: document.getElementById('aiCompanySize').value
-            };
-            localStorage.setItem('aiAnalyzerInputs', JSON.stringify(aiInputs));
+            // No longer needed - AI uses onboarding data directly
         }
 
         function loadAIInputs() {
-            const saved = localStorage.getItem('aiAnalyzerInputs');
-            if (saved) {
-                try {
-                    const inputs = JSON.parse(saved);
-                    if (inputs.role) document.getElementById('aiRole').value = inputs.role;
-                    if (inputs.location) document.getElementById('aiLocation').value = inputs.location;
-                    if (inputs.yearsExp) document.getElementById('aiYearsExp').value = inputs.yearsExp;
-                    if (inputs.industry) document.getElementById('aiIndustry').value = inputs.industry;
-                    if (inputs.companySize) document.getElementById('aiCompanySize').value = inputs.companySize;
-                } catch (e) {
-                    console.error('Error loading AI inputs:', e);
-                }
-            }
+            // No longer needed - AI uses onboarding data directly
         }
 
         // Add event listeners for AI analyzer inputs
         function setupAIInputListeners() {
-            document.getElementById('aiRole').addEventListener('input', saveAIInputs);
-            document.getElementById('aiLocation').addEventListener('input', saveAIInputs);
-            document.getElementById('aiYearsExp').addEventListener('input', saveAIInputs);
-            document.getElementById('aiIndustry').addEventListener('input', saveAIInputs);
-            document.getElementById('aiCompanySize').addEventListener('change', saveAIInputs);
+            // No longer needed - AI uses onboarding data directly
+            // Fields removed in favor of onboarding data summary
         }
 
         // Custom Autocomplete Function
@@ -1418,37 +2135,26 @@ Format your response in clear sections with bullet points. Be specific with sala
                 "Business Analyst", "Account Manager", "Product Marketing Manager"
             ];
             
-            autocomplete(document.getElementById("aiRole"), roles);
-            autocomplete(document.getElementById("aiLocation"), locations);
-            autocomplete(document.getElementById("aiIndustry"), industries);
+            // Initialize levels.fyi fields
             autocomplete(document.getElementById("levelsCompany"), companies);
             autocomplete(document.getElementById("levelsTrack"), jobTracks);
+            
+            // Onboarding fields
+            if (document.getElementById("onboardRole")) {
+                autocomplete(document.getElementById("onboardRole"), roles);
+                autocomplete(document.getElementById("onboardLocation"), locations);
+                autocomplete(document.getElementById("onboardIndustry"), industries);
+                autocomplete(document.getElementById("onboardCompany"), companies);
+            }
         }
 
         // Mode switching
         let currentMode = 'rsu';
 
+        // Legacy function - mode switching now handled by onboarding
         function switchMode(mode) {
             currentMode = mode;
-
-            if (mode === 'rsu') {
-                document.getElementById('rsuCalculator').style.display = 'block';
-                document.getElementById('isoCalculator').style.display = 'none';
-                document.getElementById('rsuModeBtn').style.background = '#8feeff';
-                document.getElementById('rsuModeBtn').style.color = '#0a0a0a';
-                document.getElementById('isoModeBtn').style.background = 'transparent';
-                document.getElementById('isoModeBtn').style.color = 'var(--text-primary)';
-            } else {
-                document.getElementById('rsuCalculator').style.display = 'none';
-                document.getElementById('isoCalculator').style.display = 'block';
-                document.getElementById('rsuModeBtn').style.background = 'transparent';
-                document.getElementById('rsuModeBtn').style.color = 'var(--text-primary)';
-                document.getElementById('isoModeBtn').style.background = '#8feeff';
-                document.getElementById('isoModeBtn').style.color = '#0a0a0a';
-                calculateISO();
-            }
-
-            localStorage.setItem('calculatorMode', mode);
+            showCalculator(mode === 'iso' ? 'iso' : 'rsu');
         }
 
         // Tax Profile Handler
@@ -2016,8 +2722,17 @@ Format your response in clear sections with bullet points. Be specific with sala
         }
 
         function resetCalculator() {
-            if (confirm('Are you sure you want to reset all values to defaults? This cannot be undone.')) {
+            if (confirm('Are you sure you want to reset all calculator values to defaults? This will not affect your profile information.')) {
+                // Preserve onboarding data
+                const onboardingCompleted = localStorage.getItem('onboardingCompleted');
+                const onboardingData = localStorage.getItem('onboardingData');
+                
                 localStorage.removeItem('databricksCompCalc');
+                
+                // Restore onboarding data
+                if (onboardingCompleted) localStorage.setItem('onboardingCompleted', onboardingCompleted);
+                if (onboardingData) localStorage.setItem('onboardingData', onboardingData);
+                
                 location.reload();
             }
         }
@@ -2179,7 +2894,12 @@ Format your response in clear sections with bullet points. Be specific with sala
             const baseSalary = parseInt(document.getElementById('baseSalary').value) || 0;
             const bonusPercent = parseFloat(document.getElementById('bonusPercent').value) || 0;
             const signOnBonus = parseInt(document.getElementById('signOnBonus').value) || 0;
-            const enableAnnualRaise = document.getElementById('enableAnnualRaise').checked;
+            
+            // Check which mode we're in and use the appropriate checkbox
+            const isCommissionMode = onboardingData.cashType === 'commission';
+            const enableAnnualRaise = isCommissionMode ? 
+                document.getElementById('enableAnnualRaiseComm').checked : 
+                document.getElementById('enableAnnualRaise').checked;
             const annualRaise = enableAnnualRaise ? 0.03 : 0; // 3% if enabled, 0% if not
 
             const initialGrant = parseFloat(document.getElementById('initialGrant').value) || 0;
@@ -2333,7 +3053,7 @@ Format your response in clear sections with bullet points. Be specific with sala
                     stack: 'pre-tax'
                 },
                 {
-                    label: 'Bonus',
+                    label: 'Target Variable',
                     data: data.map(d => d.bonus),
                     backgroundColor: '#ffd700',
                     stack: 'pre-tax'
@@ -2491,6 +3211,10 @@ Format your response in clear sections with bullet points. Be specific with sala
         // Initialize
         loadInputs();
         setupInputListeners();
+        setupOTEListeners();
+
+        // Check onboarding status first
+        checkOnboardingStatus();
 
         // Initialize AI Analyzer inputs and load saved values
         setupAIInputListeners();
